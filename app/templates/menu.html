@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Principal - Umbrella</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+</head>
+
+<body>
+    <div class="video-background">
+        <video src="{{ url_for('static', filename='Video/2.mp4') }}" autoplay loop muted></video>
+    </div>
+
+    <aside class="sidebar">
+        <h1>Menú Principal</h1>
+        <img src="{{ url_for('static', filename='img/Logo sin fondo.png') }}" alt="Logo Umbrella" class="sidebar-logo">
+        <ul class="main-menu">
+            <li>
+                <a href="#" id="enlace-generador-etiquetas">Generador de etiquetas</a>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Datos Maestro</a>
+                <ul class="submenu">
+                    <li><a href="#">Derechos de usuarios</a></li>
+                    <li><a href="#">Cambio de contraseña</a></li>
+                    <li><a href="#">Nuevo Usuario</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Medicamentos</a>
+                <ul class="submenu">
+                    <li><a href="#">Nuevo Medicamento</a></li>
+                    <li><a href="#">Nueva Monodroga</a></li>
+                    <li><a href="#">Nueva Presentación</a></li>
+                    <li><a href="#">Modificación de Medicamento</a></li>
+                    <li><a href="#">Modificación de Monodroga</a></li>
+                    <li><a href="#">Modificación de Presentación</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Categoria</a>
+                <ul class="submenu">
+                    <li><a href="#">Alimento</a></li>
+                    <li><a href="#">Antiseptico</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Sub Categoria</a>
+                <ul class="submenu">
+                    <li><a href="#">Ampolla</a></li>
+                    <li><a href="#">Comprimido</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Informes</a>
+                <ul class="submenu">
+                    <li><a href="#">Informe de Producción total</a></li>
+                    <li><a href="#">Informe de Producción por Grupos 1</a></li>
+                    <li><a href="#">Informe de Producción por Grupos 2</a></li>
+                </ul>
+            </li>
+            <li class="logout">
+                <a href="{{ url_for('auth.logout') }}"><span class="logout-icon">⬅️</span> Cerrar Sesión</a>
+            </li>
+        </ul>
+    </aside>
+
+    <div id="generador-etiquetas-container" style="display: none;">
+        <h2>Generador de Etiquetas</h2>
+        <form id="formulario-generador-etiquetas">
+            <div class="form-group">
+                <label for="centro">Centro:</label>
+                <select id="centro" name="centro">
+                    <option value="">Selecciona un Centro...</option>
+                    {% if centros %}
+                    {% for centro_item in centros %}
+                    <option value="{{ centro_item.id }}">{{ centro_item.nombre }}</option>
+                    {% endfor %}
+                    {% else %}
+                    <option value="" disabled>No hay centros disponibles</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="medicamento">Medicamento:</label>
+                <input type="text" id="medicamento" name="medicamento" required>
+                <div id="sugerencias-medicamentos" class="sugerencias-container-estilo">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="laboratorio">Laboratorio:</label>
+                <input type="text" id="laboratorio" name="laboratorio" readonly>
+            </div>
+            <div class="form-group">
+                <label for="monodroga">Monodroga:</label>
+                <input type="text" id="monodroga" name="monodroga" readonly>
+            </div>
+            <div class="form-group">
+                <label for="presentacion">Presentación:</label>
+                <input type="text" id="presentacion" name="presentacion" readonly>
+            </div>
+            <div class="form-group">
+                <label for="codigo">Código:</label> <input type="text" id="codigo" name="codigo" readonly>
+            </div>
+            <div class="form-group">
+                <label for="lote">Lote:</label>
+                <input type="text" id="lote" name="lote" pattern="^[a-zA-Z0-9-]+$" required>
+            </div>
+            <div class="form-group">
+                <label for="vencimiento">Vencimiento:</label>
+                <input type="date" id="vencimiento" name="vencimiento" required min="">
+            </div>
+            <div class="form-group">
+                <label for="grupo1">Categoria:</label>
+                <input type="text" id="grupo1" name="grupo1" readonly>
+            </div>
+            <div class="form-group">
+                <label for="grupo2">Sub Categoria:</label>
+                <input type="text" id="grupo2" name="grupo2" readonly>
+            </div>
+            <div id="trazabilidad-container" class="form-group" style="display: none;">
+                <label for="numero-serie">Número de Serie:</label>
+                <input type="text" id="numero-serie" name="numero_serie">
+            </div>
+            <button type="button">Volver atrás</button>
+            <button type="button">Ver vista previa</button>
+            <button type="reset">Limpiar</button>
+        </form>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div id="welcome-toast" class="welcome-toast">
+        <p>Bienvenido, {{ user.username }} (Rol: {{ user.role }})</p>
+    </div>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Lógica para el mensaje de Bienvenida ---
+            const welcomeToast = document.getElementById('welcome-toast');
+            if (welcomeToast) {
+                setTimeout(() => {
+                    welcomeToast.classList.add('hidden');
+                }, 3000);
+            }
+
+            // --- Lógica para el menú lateral desplegable ---
+            const menuItemsWithSubmenu = document.querySelectorAll('.has-submenu');
+            menuItemsWithSubmenu.forEach(item => {
+                const submenu = item.querySelector('.submenu');
+                if (submenu) {
+                    item.addEventListener('mouseenter', () => { submenu.style.display = 'block'; });
+                    item.addEventListener('mouseleave', () => { submenu.style.display = 'none'; });
+                }
+            });
+
+            // --- Lógica para mostrar/ocultar el generador de etiquetas ---
+            const enlaceGeneradorEtiquetas = document.getElementById('enlace-generador-etiquetas');
+            const generadorEtiquetasContainer = document.getElementById('generador-etiquetas-container');
+            if (enlaceGeneradorEtiquetas && generadorEtiquetasContainer) {
+                enlaceGeneradorEtiquetas.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    generadorEtiquetasContainer.style.display = 'block';
+                });
+            }
+
+            // --- Lógica para el autocompletado de medicamentos ---
+            const medicamentoInput = document.getElementById('medicamento');
+            const sugerenciasContainer = document.getElementById('sugerencias-medicamentos');
+            const laboratorioInput = document.getElementById('laboratorio');
+            const monodrogaInput = document.getElementById('monodroga');
+            const presentacionInput = document.getElementById('presentacion');
+            const codigoInput = document.getElementById('codigo');
+            const grupo1Input = document.getElementById('grupo1');
+            const grupo2Input = document.getElementById('grupo2');
+            const trazabilidadContainer = document.getElementById('trazabilidad-container');
+            const numeroSerieInput = document.getElementById('numero-serie');
+            const vencimientoInput = document.getElementById('vencimiento');
+
+            if (vencimientoInput) {
+                const hoy = new Date();
+                const offset = hoy.getTimezoneOffset();
+                const hoyLocal = new Date(hoy.getTime() - (offset * 60 * 1000));
+                const fechaMinima = hoyLocal.toISOString().split('T')[0];
+                vencimientoInput.setAttribute('min', fechaMinima);
+            }
+
+            if (medicamentoInput && sugerenciasContainer) {
+                medicamentoInput.addEventListener('input', async () => {
+                    const textoBusqueda = medicamentoInput.value.trim();
+                    const camposParaLimpiar = [laboratorioInput, monodrogaInput, presentacionInput, codigoInput, grupo1Input, grupo2Input, numeroSerieInput];
+
+                    if (textoBusqueda.length < 2) { // O 3, como prefieras
+                        sugerenciasContainer.innerHTML = '';
+                        sugerenciasContainer.style.display = 'none';
+                        camposParaLimpiar.forEach(campo => { if (campo) campo.value = ''; });
+                        if (trazabilidadContainer) trazabilidadContainer.style.display = 'none';
+                        return;
+                    }
+
+                    sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando...</div>';
+                    sugerenciasContainer.style.display = 'block';
+
+                    try {
+                        const response = await fetch(`/buscar_medicamentos?q=${encodeURIComponent(textoBusqueda)}`);
+                        if (!response.ok) {
+                            sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Error al buscar.</div>';
+                            console.error('Error en respuesta del servidor:', response.status);
+                            return;
+                        }
+                        const medicamentos = await response.json();
+                        sugerenciasContainer.innerHTML = '';
+
+                        if (medicamentos.length > 0) {
+                            medicamentos.forEach(med => {
+                                const sugerenciaDiv = document.createElement('div');
+                                sugerenciaDiv.textContent = med.nombre;
+                                sugerenciaDiv.classList.add('sugerencia-item');
+
+                                sugerenciaDiv.addEventListener('click', () => {
+                                    console.log("--- Sugerencia Clickeada ---");
+                                    console.log("Datos del medicamento seleccionado (med):", JSON.stringify(med, null, 2));
+
+                                    if (medicamentoInput) {
+                                        medicamentoInput.value = med.nombre;
+                                        console.log("Asignado a medicamentoInput.value:", med.nombre);
+                                        console.log("Valor REAL de medicamentoInput.value DESPUÉS:", medicamentoInput.value);
+                                    } else { console.error("Elemento 'medicamentoInput' no encontrado."); }
+
+                                    if (codigoInput) {
+                                        // CORRECCIÓN PRINCIPAL: Usar med.codigo_medicamento
+                                        const valorCodigo = med.codigo_medicamento || '';
+                                        console.log("Intentando asignar a codigoInput.value:", valorCodigo);
+                                        codigoInput.value = valorCodigo;
+                                        console.log("Valor REAL de codigoInput.value DESPUÉS:", codigoInput.value);
+                                    } else { console.error("Elemento con ID 'codigo' no encontrado."); }
+
+                                    if (presentacionInput) {
+                                        // Asumimos que el backend enviará 'presentacion_descripcion' o usamos id_pres_monodroga
+                                        const valorPresentacion = med.presentacion_descripcion || med.id_pres_monodroga || '';
+                                        console.log("Intentando asignar a presentacionInput.value:", valorPresentacion);
+                                        presentacionInput.value = valorPresentacion;
+                                        console.log("Valor REAL de presentacionInput.value DESPUÉS:", presentacionInput.value);
+                                    } else { console.error("Elemento con ID 'presentacion' no encontrado."); }
+
+                                    if (laboratorioInput) {
+                                        // Asumimos que el backend enviará 'laboratorio_nombre'
+                                        const valorLaboratorio = med.laboratorio_nombre || (med.id_laboratorio_original ? `Lab ID: ${med.id_laboratorio_original}` : '');
+                                        console.log("Intentando asignar a laboratorioInput.value:", valorLaboratorio);
+                                        laboratorioInput.value = valorLaboratorio;
+                                        console.log("Valor REAL de laboratorioInput.value DESPUÉS:", laboratorioInput.value);
+                                    } else { console.error("Elemento con ID 'laboratorio' no encontrado."); }
+
+                                    if (monodrogaInput) {
+                                        // Asumimos que el backend enviará 'monodroga_nombre'
+                                        const valorMonodroga = med.monodroga_nombre || (med.id_monodroga_original ? `Monodroga ID: ${med.id_monodroga_original}` : '');
+                                        console.log("Intentando asignar a monodrogaInput.value:", valorMonodroga);
+                                        monodrogaInput.value = valorMonodroga;
+                                        console.log("Valor REAL de monodrogaInput.value DESPUÉS:", valorMonodroga);
+                                    } else { console.error("Elemento con ID 'monodroga' no encontrado."); }
+
+                                    if (grupo1Input) { // Categoría
+                                        // Asumimos que el backend enviará 'categoria_principal_nombre'
+                                        const valorGrupo1 = med.categoria_principal_nombre || (med.id_categoria_principal_original ? `Cat ID: ${med.id_categoria_principal_original}` : '');
+                                        console.log("Intentando asignar a grupo1Input.value:", valorGrupo1);
+                                        grupo1Input.value = valorGrupo1;
+                                        console.log("Valor REAL de grupo1Input.value DESPUÉS:", grupo1Input.value);
+                                    } else { console.error("Elemento con ID 'grupo1' no encontrado."); }
+
+                                    if (grupo2Input) { // Subcategoría
+                                        // Asumimos que el backend enviará 'subcategoria_nombre'
+                                        const valorGrupo2 = med.subcategoria_nombre || (med.id_subcategoria_original ? `SubCat ID: ${med.id_subcategoria_original}` : '');
+                                        console.log("Intentando asignar a grupo2Input.value:", valorGrupo2);
+                                        grupo2Input.value = valorGrupo2;
+                                        console.log("Valor REAL de grupo2Input.value DESPUÉS:", grupo2Input.value);
+                                    } else { console.error("Elemento con ID 'grupo2' no encontrado."); }
+
+                                    if (trazabilidadContainer) {
+                                        console.log("med.trazable:", med.trazable, "(Tipo:", typeof med.trazable + ")");
+                                        if (med.trazable === true || med.trazable === 'true' || med.trazable === 1 || med.trazable === '1') {
+                                            trazabilidadContainer.style.display = 'block';
+                                            console.log("Mostrando trazabilidadContainer.");
+                                        } else {
+                                            trazabilidadContainer.style.display = 'none';
+                                            if (numeroSerieInput) numeroSerieInput.value = '';
+                                            console.log("Ocultando trazabilidadContainer.");
+                                            if (numeroSerieInput) console.log("Valor REAL de numeroSerieInput.value DESPUÉS (si se limpió):", numeroSerieInput.value);
+                                        }
+                                    } else { console.error("Elemento con ID 'trazabilidad-container' no encontrado."); }
+
+                                    if (sugerenciasContainer) {
+                                        sugerenciasContainer.innerHTML = '';
+                                        sugerenciasContainer.style.display = 'none';
+                                        console.log("Sugerencias limpiadas y ocultadas.");
+                                    } else { console.error("Elemento 'sugerenciasContainer' no encontrado al final del click.") }
+                                });
+                                sugerenciasContainer.appendChild(sugerenciaDiv);
+                            });
+                        } else {
+                            sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron medicamentos.</div>';
+                        }
+                    } catch (error) {
+                        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Error en la búsqueda.</div>';
+                        console.error('Error en fetch para buscar_medicamentos:', error);
+                    }
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (sugerenciasContainer && event.target !== medicamentoInput && !sugerenciasContainer.contains(event.target)) {
+                        sugerenciasContainer.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

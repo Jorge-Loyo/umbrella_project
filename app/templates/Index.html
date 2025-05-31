@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Umbrella - Inicio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="welcome-container">
+        <div class="welcome-text-container">
+            <h1 class="welcome-message">
+                <span class="welcome-text">Bienvenido a</span><br>
+                <img src="{{ url_for('static', filename='img/Logo sin fondo.png') }}" alt="Logo Umbrella"
+                    class="umbrella-logo">
+                <span class="logo">Umbrella</span>
+            </h1>
+        </div>
+        <img src="https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            alt="Imagen de Bienvenida" class="welcome-image">
+    </div>
+
+    <div class="login-container hidden">
+        <h1 class="login-title">
+            <span class="logo-title"> Umbrella</span>
+        </h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flashes"> {% for category, message in messages %} <li class="{{ category }}">{{ message }}</li>
+            {% endfor %} </ul>
+        {% endif %} {% endwith %} <form class="login-form" method="POST" action="{{ url_for('auth.login') }}">
+            <div class="form-group">
+                <label for="username_index">Usuario:</label>
+                <input type="text" id="username_index" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password_index">Contraseña:</label>
+                <input type="password" id="password_index" name="password" required>
+            </div>
+            <button type="submit" class="login-button">Iniciar Sesión</button>
+        </form>
+        <div style="text-align: center; margin-top: 15px;">
+            <p>O ve directamente a la <a href="{{ url_for('auth.login') }}">página de login dedicada</a>.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const welcomeContainer = document.querySelector('.welcome-container');
+            const loginContainer = document.querySelector('.login-container');
+
+            setTimeout(() => {
+                welcomeContainer.style.opacity = '0';
+                setTimeout(() => {
+                    welcomeContainer.style.display = 'none';
+                    loginContainer.classList.remove('hidden');
+                    loginContainer.style.opacity = '1';
+                }, 500);
+            }, 3000);
+        });
+    </script>
+
+    <div id="error-message" style="color: red; display: none; margin-top: 10px; text-align: center;"></div>
+</body>
+
+</html>
