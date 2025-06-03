@@ -239,44 +239,34 @@
                                     } else { console.error("Elemento con ID 'codigo' no encontrado."); }
 
                                     if (presentacionInput) {
-                                        // Asumimos que el backend enviará 'presentacion_descripcion' o usamos id_pres_monodroga
-                                        const valorPresentacion = med.presentacion_descripcion || med.id_pres_monodroga || '';
-                                        console.log("Intentando asignar a presentacionInput.value:", valorPresentacion);
+                                        const valorPresentacion = med.presentacion_descripcion || ''; // Usa la descripción
                                         presentacionInput.value = valorPresentacion;
                                         console.log("Valor REAL de presentacionInput.value DESPUÉS:", presentacionInput.value);
-                                    } else { console.error("Elemento con ID 'presentacion' no encontrado."); }
+                                    }
 
                                     if (laboratorioInput) {
-                                        // Asumimos que el backend enviará 'laboratorio_nombre'
-                                        const valorLaboratorio = med.laboratorio_nombre || (med.id_laboratorio_original ? `Lab ID: ${med.id_laboratorio_original}` : '');
-                                        console.log("Intentando asignar a laboratorioInput.value:", valorLaboratorio);
+                                        const valorLaboratorio = med.laboratorio_nombre || ''; // Usa el nombre
                                         laboratorioInput.value = valorLaboratorio;
                                         console.log("Valor REAL de laboratorioInput.value DESPUÉS:", laboratorioInput.value);
-                                    } else { console.error("Elemento con ID 'laboratorio' no encontrado."); }
+                                    }
 
                                     if (monodrogaInput) {
-                                        // Asumimos que el backend enviará 'monodroga_nombre'
-                                        const valorMonodroga = med.monodroga_nombre || (med.id_monodroga_original ? `Monodroga ID: ${med.id_monodroga_original}` : '');
-                                        console.log("Intentando asignar a monodrogaInput.value:", valorMonodroga);
+                                        const valorMonodroga = med.monodroga_nombre || ''; // Usa el nombre
                                         monodrogaInput.value = valorMonodroga;
-                                        console.log("Valor REAL de monodrogaInput.value DESPUÉS:", valorMonodroga);
-                                    } else { console.error("Elemento con ID 'monodroga' no encontrado."); }
+                                        console.log("Valor REAL de monodrogaInput.value DESPUÉS:", monodrogaInput.value);
+                                    }
 
                                     if (grupo1Input) { // Categoría
-                                        // Asumimos que el backend enviará 'categoria_principal_nombre'
-                                        const valorGrupo1 = med.categoria_principal_nombre || (med.id_categoria_principal_original ? `Cat ID: ${med.id_categoria_principal_original}` : '');
-                                        console.log("Intentando asignar a grupo1Input.value:", valorGrupo1);
+                                        const valorGrupo1 = med.categoria_principal_nombre || ''; // Usa el nombre
                                         grupo1Input.value = valorGrupo1;
                                         console.log("Valor REAL de grupo1Input.value DESPUÉS:", grupo1Input.value);
-                                    } else { console.error("Elemento con ID 'grupo1' no encontrado."); }
+                                    }
 
                                     if (grupo2Input) { // Subcategoría
-                                        // Asumimos que el backend enviará 'subcategoria_nombre'
-                                        const valorGrupo2 = med.subcategoria_nombre || (med.id_subcategoria_original ? `SubCat ID: ${med.id_subcategoria_original}` : '');
-                                        console.log("Intentando asignar a grupo2Input.value:", valorGrupo2);
+                                        const valorGrupo2 = med.subcategoria_nombre || ''; // Usa el nombre
                                         grupo2Input.value = valorGrupo2;
                                         console.log("Valor REAL de grupo2Input.value DESPUÉS:", grupo2Input.value);
-                                    } else { console.error("Elemento con ID 'grupo2' no encontrado."); }
+                                    }
 
                                     if (trazabilidadContainer) {
                                         console.log("med.trazable:", med.trazable, "(Tipo:", typeof med.trazable + ")");

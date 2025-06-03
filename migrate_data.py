@@ -300,7 +300,7 @@ def migrate_medicamentos(excel_filepath, sheet_name='Base'):
                     "id_categoria": id_categoria,
                     "categoria": categoria,
                     "id_subcategoria": id_subcategoria, 
-                    subcategoria: subcategoria,   
+                    "subcategoria": subcategoria,   
                     "trazable": es_trazable,
                     
                 }

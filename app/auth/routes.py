@@ -1,44 +1,55 @@
 from flask import render_template, current_app, request, redirect, url_for, flash
 from app.auth import bp
-from app.models import User # <--- IMPORTAR la clase User
-from flask_login import login_user, logout_user, current_user, login_required # <--- IMPORTAR funciones de Flask-Login
+from app.models import User
+from flask_login import login_user, logout_user, current_user, login_required, AnonymousUserMixin # Añade AnonymousUserMixin
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # Si el usuario ya está autenticado, redirigirlo al menú
+    # --- INICIO DE LOGS DE DEPURACIÓN PARA current_user ---
+    current_app.logger.debug(f"Accediendo a /auth/login. Método: {request.method}")
+    current_app.logger.debug(f"Valor de current_user: {current_user}")
+    current_app.logger.debug(f"Tipo de current_user: {type(current_user)}")
+    is_anon = isinstance(current_user, AnonymousUserMixin)
+    current_app.logger.debug(f"¿Es current_user una instancia de AnonymousUserMixin?: {is_anon}")
+    
+    if current_user is not None:
+        current_app.logger.debug(f"current_user.is_authenticated (si no es None): {hasattr(current_user, 'is_authenticated') and current_user.is_authenticated}")
+    else:
+        current_app.logger.warning("current_user ES None ANTES del chequeo de is_authenticated.")
+    # --- FIN DE LOGS DE DEPURACIÓN ---
+
+    # Esta es la línea que daba error (línea 20 en tu traceback anterior)
     if current_user.is_authenticated:
+        current_app.logger.info(f"Usuario '{current_user.username}' ya autenticado. Redirigiendo al menú.")
         return redirect(url_for('main.menu'))
 
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        current_app.logger.info(f"Intento de login para el usuario: {username}")
+        current_app.logger.info(f"Intento de login POST para el usuario: '{username}'")
 
-        user = User.find_by_username(username) # Busca el usuario en la BD
+        user = User.find_by_username(username) 
 
-        if user and user.check_password(password): # Si el usuario existe y la contraseña es correcta
-            login_user(user) # Inicia la sesión para este usuario con Flask-Login
-            current_app.logger.info(f"Login exitoso para {username}. Redirigiendo al menú.")
-            # Flask-Login maneja la cookie de sesión.
-            # Redirige a la página siguiente si el usuario intentaba acceder a una página protegida,
-            # o al menú principal por defecto.
+        if user and user.check_password(password):
+            login_user(user) 
+            current_app.logger.info(f"Login exitoso para '{username}'. Redirigiendo al menú.")
             next_page = request.args.get('next')
-            if not next_page or url_for(next_page.lstrip('/')) == url_for('main.index'): # Evitar redirección a logout o index si es la página por defecto
+            if not next_page or url_for(next_page.lstrip('/')) == url_for('main.index'):
                  next_page = url_for('main.menu')
             return redirect(next_page)
         else:
-            current_app.logger.warning(f"Login fallido para {username}: usuario no encontrado o contraseña incorrecta.")
+            current_app.logger.warning(f"Login fallido para '{username}': usuario no encontrado o contraseña incorrecta.")
             flash('Usuario o contraseña incorrectos.', 'danger')
-            # No es necesario redirigir aquí, simplemente se vuelve a renderizar la plantilla de login
-            # return redirect(url_for('auth.login')) # Esto causaría una recarga innecesaria
-
-    # Si es GET o el login falló (y no se redirigió en el POST)
+            # Se vuelve a renderizar la plantilla de login para mostrar el mensaje flash
+            # No es necesario un redirect(url_for('auth.login')) aquí si solo mostramos el error en la misma vista.
+            
+    # Para GET request o si el POST falló y no se redirigió
     return render_template('login.html', title='Iniciar Sesión')
 
 @bp.route('/logout')
-@login_required # Solo usuarios logueados pueden desloguearse
+@login_required 
 def logout():
-    logout_user() # Cierra la sesión del usuario actual con Flask-Login
+    logout_user() 
     current_app.logger.info('Usuario cerró sesión.')
     flash('Has cerrado sesión exitosamente.', 'success')
-    return redirect(url_for('main.index')) # Redirige a la página de inicio
+    return redirect(url_for('main.index'))

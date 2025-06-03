@@ -1,8 +1,7 @@
-from flask import render_template, current_app, url_for
+from flask import render_template, current_app, url_for, request, jsonify, flash # Asegúrate de tener flash aquí si lo usas en esta ruta (lo usabas en /menu)
 from app.main import bp
 from flask_login import login_required, current_user
 from app import get_db # Importa la función para obtener la instancia de la BD
-from flask import request, jsonify # request para acceder a los parámetros de la URL, jsonify para respuestas JSON
 
 @bp.route('/')
 @bp.route('/index')
@@ -15,25 +14,21 @@ def index():
 def menu():
     current_app.logger.info(f"Usuario '{current_user.username}' accediendo al menú.")
     
-    db = get_db() # Obtiene la instancia de la base de datos
+    db = get_db()
     lista_centros = []
     try:
-        # Busca todos los documentos en la colección 'centros'
-        # y ordena por el campo 'nombre' alfabéticamente.
-        # Asumimos que cada documento en 'centros' tiene un campo 'nombre' y 'id_sucursal_original'.
-        centros_cursor = db.centros.find().sort("nombre", 1) # 1 para ascendente
+        centros_cursor = db.centros.find().sort("nombre", 1)
         for centro in centros_cursor:
             lista_centros.append({
-                "id": centro.get("id_sucursal_original"), # O podrías usar str(centro.get("_id")) si prefieres el ObjectId de Mongo
+                "id": centro.get("id_sucursal_original"),
                 "nombre": centro.get("nombre")
             })
         current_app.logger.debug(f"Centros cargados para el menú: {lista_centros}")
     except Exception as e:
         current_app.logger.error(f"Error al cargar centros desde MongoDB: {e}")
-        flash("Error al cargar la lista de centros.", "danger")
+        flash("Error al cargar la lista de centros.", "danger") # Necesitas importar flash de flask
 
-    return render_template('menu.html', title='Menú Principal', user=current_user, centros=lista_centros) # Pasa la lista a la plantilla
-# ... (tus otras rutas como index, menu) ...
+    return render_template('menu.html', title='Menú Principal', user=current_user, centros=lista_centros)
 
 @bp.route('/buscar_medicamentos')
 @login_required
@@ -42,77 +37,48 @@ def buscar_medicamentos():
     query = request.args.get('q', '').strip()
     medicamentos_encontrados = []
 
-    if len(query) >= 2: # O 3
+    if len(query) >= 2: # O 3, como prefieras
         current_app.logger.debug(f"Buscando medicamentos con query: '{query}'")
         try:
             regex_query = {"$regex": f"^{query}", "$options": "i"}
             
+            # Buscamos por 'nombre' del medicamento o por 'codigo_medicamento'
+            # El script de migración crea un índice de texto en ambos.
             resultados_cursor = db.medicamentos.find({
                 "$or": [
-                    {"nombre": regex_query},
-                    {"codigo_medicamento": regex_query}
+                    {"nombre": regex_query}, # Asumiendo que el campo en MongoDB es 'nombre' para el nombre del medicamento
+                    {"codigo_medicamento": regex_query} # Asumiendo que el campo es 'codigo_medicamento'
                 ]
             }).limit(15)
 
             for med_doc in resultados_cursor:
-                # Obtener nombre del laboratorio
-                nombre_laboratorio = "N/A"
-                if med_doc.get("id_laboratorio_original") is not None:
-                    lab = db.laboratorios.find_one({"id_laboratorio_original": med_doc["id_laboratorio_original"]})
-                    if lab:
-                        nombre_laboratorio = lab.get("nombre", "N/A")
-                
-                # Obtener nombre de la monodroga
-                nombre_monodroga = "N/A"
-                if med_doc.get("id_monodroga_original") is not None:
-                    mono = db.monodrogas.find_one({"id_monodroga_original": med_doc["id_monodroga_original"]})
-                    if mono:
-                        nombre_monodroga = mono.get("nombre", "N/A")
-
-                # Obtener nombre de la categoría principal
-                nombre_categoria_principal = "N/A"
-                if med_doc.get("id_categoria_principal_original") is not None:
-                    cat_p = db.categorias_principales.find_one({"id_categoria_original": med_doc["id_categoria_principal_original"]})
-                    if cat_p:
-                        nombre_categoria_principal = cat_p.get("nombre", "N/A")
-                
-                # Obtener nombre de la subcategoría
-                nombre_subcategoria = "N/A"
-                if med_doc.get("id_subcategoria_original") is not None:
-                    sub_cat = db.subcategorias.find_one({"id_subcategoria_original": med_doc["id_subcategoria_original"]})
-                    if sub_cat:
-                        nombre_subcategoria = sub_cat.get("nombre", "N/A")
-
-                # Para la PRESENTACIÓN:
-                # Asumiremos por ahora que id_pres_monodroga es la descripción directa o un ID.
-                # Si es un ID que necesita lookup, necesitaríamos otra consulta aquí.
-                # Si 'PRESE. MONODROGA' estaba en tu hoja 'Base' junto a 'ID_PRES_MONODROGA', 
-                # deberías haberlo migrado a la colección 'medicamentos'.
-                # Por ahora, usaré el valor de id_pres_monodroga directamente.
-                # Si tienes una columna con el nombre de la presentación en tu hoja "Base",
-                # asegúrate de que se migre al documento 'medicamentos'
-                # y luego accede a ella aquí, ej: med_doc.get("nombre_presentacion_migrado")
-
-                presentacion_desc = med_doc.get("id_pres_monodroga", "N/A") # Placeholder
-                # Si tuvieras el nombre de la presentación en el mismo documento med_doc:
-                # presentacion_desc = med_doc.get("nombre_campo_presentacion", med_doc.get("id_pres_monodroga", "N/A"))
-
-
+                # Extraemos los datos directamente del documento del medicamento,
+                # ya que ahora están denormalizados según tu último migrate_data.py
                 medicamentos_encontrados.append({
-                    "id": str(med_doc.get("_id")),
-                    "nombre": med_doc.get("nombre"),
-                    "codigo_medicamento": med_doc.get("codigo_medicamento"),
-                    # Devolvemos los NOMBRES ahora
-                    "laboratorio_nombre": nombre_laboratorio,
-                    "monodroga_nombre": nombre_monodroga,
-                    "presentacion_descripcion": presentacion_desc, # <--- AJUSTAR ESTO SEGÚN CÓMO OBTENGAS LA DESCRIPCIÓN
-                    "categoria_principal_nombre": nombre_categoria_principal,
-                    "subcategoria_nombre": nombre_subcategoria,
-                    "trazable": med_doc.get("trazable", False) # Asegurar un default
+                    "id": str(med_doc.get("_id")), # El ObjectId de MongoDB como string
+                    "nombre": med_doc.get("nombre", "N/A"), # Nombre del medicamento
+                    "codigo_medicamento": med_doc.get("codigo_medicamento", "N/A"), # Código del medicamento
+                    
+                    # Nombres directos desde el documento med_doc
+                    "laboratorio_nombre": med_doc.get("laboratorio", "N/A"),
+                    "monodroga_nombre": med_doc.get("monodroga", "N/A"),
+                    "presentacion_descripcion": med_doc.get("presentacion_monodroga", "N/A"), # Usamos el campo con la descripción
+                    "categoria_principal_nombre": med_doc.get("categoria", "N/A"), # Nombre de la categoría principal
+                    "subcategoria_nombre": med_doc.get("subcategoria", "N/A"),       # Nombre de la subcategoría
+                    
+                    "trazable": med_doc.get("trazable", False), # Default a False si no está
+                    
+                    # También podrías querer devolver los IDs si son útiles para alguna otra lógica en el frontend,
+                    # aunque para mostrar en el formulario ya no los necesitarías directamente.
+                    "id_laboratorio_original": med_doc.get("id_laboratorio_original"),
+                    "id_monodroga_original": med_doc.get("id_monodroga_original"),
+                    "id_pres_monodroga": med_doc.get("id_pres_monodroga"), # El ID de la presentación
+                    "id_categoria_principal_original": med_doc.get("id_categoria"), # El ID de la categoría principal
+                    "id_subcategoria_original": med_doc.get("id_subcategoria")   # El ID de la subcategoría
                 })
-            current_app.logger.debug(f"Medicamentos encontrados (con detalles): {medicamentos_encontrados}")
+            current_app.logger.debug(f"Medicamentos encontrados para JSON: {medicamentos_encontrados}")
         except Exception as e:
-            current_app.logger.error(f"Error al buscar medicamentos y sus detalles en MongoDB: {e}")
-            return jsonify({"error": str(e)}), 500
+            current_app.logger.error(f"Error al buscar medicamentos en MongoDB: {e}")
+            return jsonify({"error": "Error interno al buscar medicamentos"}), 500
     
     return jsonify(medicamentos_encontrados)

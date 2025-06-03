@@ -1,17 +1,15 @@
 from flask import Flask
 from pymongo import MongoClient
-from config import Config
+from config import Config # Asegúrate que Config esté correctamente importada de tu config.py
 import logging
-from flask_login import LoginManager # <--- IMPORTAR LoginManager
+from flask_login import LoginManager
 
 mongo_client = None
 db = None
-login_manager = LoginManager() # <--- CREAR INSTANCIA de LoginManager
-# Esta es la vista a la que Flask-Login redirigirá a los usuarios
-# si intentan acceder a una página protegida sin haber iniciado sesión.
-login_manager.login_view = 'auth.login' # 'auth.login' es el endpoint de tu ruta de login (blueprint auth, función login)
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
 login_manager.login_message = "Por favor, inicia sesión para acceder a esta página."
-login_manager.login_message_category = "info" # Categoría para el mensaje flash
+login_manager.login_message_category = "info"
 
 def create_app(config_class=Config):
     global mongo_client, db
@@ -19,9 +17,19 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
+    # Configuración del logger
     app.logger.setLevel(logging.DEBUG)
     app.logger.info('Aplicación Umbrella iniciándose...')
 
+    # Verificar que SECRET_KEY esté cargada
+    if not app.secret_key:
+        app.logger.warning("ADVERTENCIA: SECRET_KEY no está configurada en la aplicación!")
+    else:
+        app.logger.info(f"SECRET_KEY cargada correctamente.")
+        # app.logger.debug(f"Valor de SECRET_KEY (solo para depuración extrema, no usar en producción): {app.secret_key}")
+
+
+    # Conexión a MongoDB
     try:
         if mongo_client is None:
             mongo_client = MongoClient(app.config['MONGO_URI'])
@@ -34,7 +42,9 @@ def create_app(config_class=Config):
         app.logger.error(f"Error al conectar o configurar MongoDB: {e}")
         db = None
 
-    login_manager.init_app(app) # <--- INICIALIZAR Flask-Login con la app
+    # Inicializar Flask-Login
+    login_manager.init_app(app)
+    app.logger.info("Flask-Login inicializado con la aplicación.")
 
     # Registrar Blueprints
     from app.main.routes import bp as main_bp
@@ -51,17 +61,34 @@ def create_app(config_class=Config):
 
     return app
 
-# User loader callback para Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
-    """
-    Esta función es usada por Flask-Login para cargar un usuario dado su ID
-    (el que se almacena en la cookie de sesión).
-    """
-    from app.models import User # Importar aquí para evitar importación circular
-    return User.get(user_id)
+    # Usaremos el logger de la aplicación Flask.
+    # Para acceder a app.logger aquí, necesitaríamos el contexto de la aplicación
+    # o importar current_app. Es más simple usar print para este callback si
+    # el logger de la app no está fácilmente disponible sin el contexto.
+    # O, si estás seguro de que esto se llama dentro de un contexto de solicitud:
+    from flask import current_app
+    
+    current_app.logger.debug(f"Flask-Login user_loader: Intentando cargar usuario con user_id: '{user_id}' (tipo: {type(user_id)})")
+    from app.models import User # Importación diferida para evitar importaciones circulares
+    
+    if user_id is None:
+        current_app.logger.warning("Flask-Login user_loader: user_id es None. Retornando None.")
+        return None
+        
+    user = User.get(user_id) # User.get debe manejar la búsqueda en la BD
+
+    if user:
+        current_app.logger.debug(f"Flask-Login user_loader: Usuario '{user.username}' (ID: {user.id}) cargado.")
+    else:
+        current_app.logger.warning(f"Flask-Login user_loader: No se encontró usuario para user_id: '{user_id}'. User.get() retornó None.")
+    return user
 
 def get_db():
     if db is None:
-        raise RuntimeError("La base de datos no ha sido inicializada.")
+        # Considera si quieres que la app falle aquí o si User.get() puede manejar un db None
+        # Si db es None, la conexión inicial falló.
+        print("ERROR CRITICO: get_db() fue llamado pero la instancia 'db' es None.")
+        raise RuntimeError("La base de datos no ha sido inicializada o la conexión falló.")
     return db
