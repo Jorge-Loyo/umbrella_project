@@ -7,6 +7,7 @@
     <title>Menú Principal - Umbrella</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 
 <body>
@@ -86,7 +87,7 @@
             </div>
             <div class="form-group">
                 <label for="medicamento">Medicamento:</label>
-                <input type="text" id="medicamento" name="medicamento" required>
+                <input type="text" id="medicamento" name="medicamento" autocomplete="off" required>
                 <div id="sugerencias-medicamentos" class="sugerencias-container-estilo">
                 </div>
             </div>
@@ -103,7 +104,8 @@
                 <input type="text" id="presentacion" name="presentacion" readonly>
             </div>
             <div class="form-group">
-                <label for="codigo">Código:</label> <input type="text" id="codigo" name="codigo" readonly>
+                <label for="codigo">Código:</label>
+                <input type="text" id="codigo" name="codigo" readonly>
             </div>
             <div class="form-group">
                 <label for="lote">Lote:</label>
@@ -126,9 +128,38 @@
                 <input type="text" id="numero-serie" name="numero_serie">
             </div>
             <button type="button">Volver atrás</button>
-            <button type="button">Ver vista previa</button>
-            <button type="reset">Limpiar</button>
+            <button type="button" id="boton-vista-previa">Ver vista previa</button>
+            <button type="reset" id="boton-limpiar-formulario">Limpiar</button>
         </form>
+
+        <div id="vista-previa-etiqueta-seccion" style="display: none;">
+            <h3>Previsualización de Etiqueta</h3>
+            <div class="label-preview-container">
+                <div class="label-content">
+                    <div class="label-header">
+                        <span id="preview-centro" class="label-centro"></span>
+                    </div>
+                    <div class="label-body">
+                        <div class="label-details">
+                            <p class="medicamento-nombre"><strong id="preview-medicamento-nombre"></strong></p>
+                            <p><strong>Monodroga:</strong> <span id="preview-monodroga"></span></p>
+                            <p><strong>Presentación:</strong> <span id="preview-presentacion"></span></p>
+                            <div class="lote-vencimiento">
+                                <p><strong>Lote:</strong> <span id="preview-lote"></span></p>
+                                <p><strong>Venc:</strong> <span id="preview-vencimiento"></span></p>
+                            </div>
+                        </div>
+                        <div class="label-qr-code">
+                            <div id="qrcode-preview-area"></div>
+                            <p class="codigo-producto">Cod: <span id="preview-codigo-producto"></span></p>
+                        </div>
+                    </div>
+                    <div class="label-footer">
+                        <span id="preview-usuario" class="label-usuario"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     {% if user.is_authenticated %}
@@ -136,176 +167,7 @@
         <p>Bienvenido, {{ user.username }} (Rol: {{ user.role }})</p>
     </div>
     {% endif %}
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Lógica para el mensaje de Bienvenida ---
-            const welcomeToast = document.getElementById('welcome-toast');
-            if (welcomeToast) {
-                setTimeout(() => {
-                    welcomeToast.classList.add('hidden');
-                }, 3000);
-            }
-
-            // --- Lógica para el menú lateral desplegable ---
-            const menuItemsWithSubmenu = document.querySelectorAll('.has-submenu');
-            menuItemsWithSubmenu.forEach(item => {
-                const submenu = item.querySelector('.submenu');
-                if (submenu) {
-                    item.addEventListener('mouseenter', () => { submenu.style.display = 'block'; });
-                    item.addEventListener('mouseleave', () => { submenu.style.display = 'none'; });
-                }
-            });
-
-            // --- Lógica para mostrar/ocultar el generador de etiquetas ---
-            const enlaceGeneradorEtiquetas = document.getElementById('enlace-generador-etiquetas');
-            const generadorEtiquetasContainer = document.getElementById('generador-etiquetas-container');
-            if (enlaceGeneradorEtiquetas && generadorEtiquetasContainer) {
-                enlaceGeneradorEtiquetas.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    generadorEtiquetasContainer.style.display = 'block';
-                });
-            }
-
-            // --- Lógica para el autocompletado de medicamentos ---
-            const medicamentoInput = document.getElementById('medicamento');
-            const sugerenciasContainer = document.getElementById('sugerencias-medicamentos');
-            const laboratorioInput = document.getElementById('laboratorio');
-            const monodrogaInput = document.getElementById('monodroga');
-            const presentacionInput = document.getElementById('presentacion');
-            const codigoInput = document.getElementById('codigo');
-            const grupo1Input = document.getElementById('grupo1');
-            const grupo2Input = document.getElementById('grupo2');
-            const trazabilidadContainer = document.getElementById('trazabilidad-container');
-            const numeroSerieInput = document.getElementById('numero-serie');
-            const vencimientoInput = document.getElementById('vencimiento');
-
-            if (vencimientoInput) {
-                const hoy = new Date();
-                const offset = hoy.getTimezoneOffset();
-                const hoyLocal = new Date(hoy.getTime() - (offset * 60 * 1000));
-                const fechaMinima = hoyLocal.toISOString().split('T')[0];
-                vencimientoInput.setAttribute('min', fechaMinima);
-            }
-
-            if (medicamentoInput && sugerenciasContainer) {
-                medicamentoInput.addEventListener('input', async () => {
-                    const textoBusqueda = medicamentoInput.value.trim();
-                    const camposParaLimpiar = [laboratorioInput, monodrogaInput, presentacionInput, codigoInput, grupo1Input, grupo2Input, numeroSerieInput];
-
-                    if (textoBusqueda.length < 2) { // O 3, como prefieras
-                        sugerenciasContainer.innerHTML = '';
-                        sugerenciasContainer.style.display = 'none';
-                        camposParaLimpiar.forEach(campo => { if (campo) campo.value = ''; });
-                        if (trazabilidadContainer) trazabilidadContainer.style.display = 'none';
-                        return;
-                    }
-
-                    sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando...</div>';
-                    sugerenciasContainer.style.display = 'block';
-
-                    try {
-                        const response = await fetch(`/buscar_medicamentos?q=${encodeURIComponent(textoBusqueda)}`);
-                        if (!response.ok) {
-                            sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Error al buscar.</div>';
-                            console.error('Error en respuesta del servidor:', response.status);
-                            return;
-                        }
-                        const medicamentos = await response.json();
-                        sugerenciasContainer.innerHTML = '';
-
-                        if (medicamentos.length > 0) {
-                            medicamentos.forEach(med => {
-                                const sugerenciaDiv = document.createElement('div');
-                                sugerenciaDiv.textContent = med.nombre;
-                                sugerenciaDiv.classList.add('sugerencia-item');
-
-                                sugerenciaDiv.addEventListener('click', () => {
-                                    console.log("--- Sugerencia Clickeada ---");
-                                    console.log("Datos del medicamento seleccionado (med):", JSON.stringify(med, null, 2));
-
-                                    if (medicamentoInput) {
-                                        medicamentoInput.value = med.nombre;
-                                        console.log("Asignado a medicamentoInput.value:", med.nombre);
-                                        console.log("Valor REAL de medicamentoInput.value DESPUÉS:", medicamentoInput.value);
-                                    } else { console.error("Elemento 'medicamentoInput' no encontrado."); }
-
-                                    if (codigoInput) {
-                                        // CORRECCIÓN PRINCIPAL: Usar med.codigo_medicamento
-                                        const valorCodigo = med.codigo_medicamento || '';
-                                        console.log("Intentando asignar a codigoInput.value:", valorCodigo);
-                                        codigoInput.value = valorCodigo;
-                                        console.log("Valor REAL de codigoInput.value DESPUÉS:", codigoInput.value);
-                                    } else { console.error("Elemento con ID 'codigo' no encontrado."); }
-
-                                    if (presentacionInput) {
-                                        const valorPresentacion = med.presentacion_descripcion || ''; // Usa la descripción
-                                        presentacionInput.value = valorPresentacion;
-                                        console.log("Valor REAL de presentacionInput.value DESPUÉS:", presentacionInput.value);
-                                    }
-
-                                    if (laboratorioInput) {
-                                        const valorLaboratorio = med.laboratorio_nombre || ''; // Usa el nombre
-                                        laboratorioInput.value = valorLaboratorio;
-                                        console.log("Valor REAL de laboratorioInput.value DESPUÉS:", laboratorioInput.value);
-                                    }
-
-                                    if (monodrogaInput) {
-                                        const valorMonodroga = med.monodroga_nombre || ''; // Usa el nombre
-                                        monodrogaInput.value = valorMonodroga;
-                                        console.log("Valor REAL de monodrogaInput.value DESPUÉS:", monodrogaInput.value);
-                                    }
-
-                                    if (grupo1Input) { // Categoría
-                                        const valorGrupo1 = med.categoria_principal_nombre || ''; // Usa el nombre
-                                        grupo1Input.value = valorGrupo1;
-                                        console.log("Valor REAL de grupo1Input.value DESPUÉS:", grupo1Input.value);
-                                    }
-
-                                    if (grupo2Input) { // Subcategoría
-                                        const valorGrupo2 = med.subcategoria_nombre || ''; // Usa el nombre
-                                        grupo2Input.value = valorGrupo2;
-                                        console.log("Valor REAL de grupo2Input.value DESPUÉS:", grupo2Input.value);
-                                    }
-
-                                    if (trazabilidadContainer) {
-                                        console.log("med.trazable:", med.trazable, "(Tipo:", typeof med.trazable + ")");
-                                        if (med.trazable === true || med.trazable === 'true' || med.trazable === 1 || med.trazable === '1') {
-                                            trazabilidadContainer.style.display = 'block';
-                                            console.log("Mostrando trazabilidadContainer.");
-                                        } else {
-                                            trazabilidadContainer.style.display = 'none';
-                                            if (numeroSerieInput) numeroSerieInput.value = '';
-                                            console.log("Ocultando trazabilidadContainer.");
-                                            if (numeroSerieInput) console.log("Valor REAL de numeroSerieInput.value DESPUÉS (si se limpió):", numeroSerieInput.value);
-                                        }
-                                    } else { console.error("Elemento con ID 'trazabilidad-container' no encontrado."); }
-
-                                    if (sugerenciasContainer) {
-                                        sugerenciasContainer.innerHTML = '';
-                                        sugerenciasContainer.style.display = 'none';
-                                        console.log("Sugerencias limpiadas y ocultadas.");
-                                    } else { console.error("Elemento 'sugerenciasContainer' no encontrado al final del click.") }
-                                });
-                                sugerenciasContainer.appendChild(sugerenciaDiv);
-                            });
-                        } else {
-                            sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron medicamentos.</div>';
-                        }
-                    } catch (error) {
-                        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Error en la búsqueda.</div>';
-                        console.error('Error en fetch para buscar_medicamentos:', error);
-                    }
-                });
-
-                document.addEventListener('click', (event) => {
-                    if (sugerenciasContainer && event.target !== medicamentoInput && !sugerenciasContainer.contains(event.target)) {
-                        sugerenciasContainer.style.display = 'none';
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/menu_script.js') }}"></script>
 </body>
 
 </html>
