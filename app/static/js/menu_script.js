@@ -18,6 +18,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuItemsWithSubmenu = document.querySelectorAll('.has-submenu');
     const enlaceGeneradorEtiquetas = document.getElementById('enlace-generador-etiquetas');
     const generadorEtiquetasContainer = document.getElementById('generador-etiquetas-container');
+    const enlaceCrearMedicamento = document.getElementById('enlace-crear-medicamento');
+    const crearNuevoMedicamento = document.getElementById('crear-medicamento');
+    const enlaceCrearMonodroga = document.getElementById('enlace-crear-monodroga');
+    const crearNuevaMonodroga = document.getElementById('crear-monodroga')
+    const enlaceCrearCategoria = document.getElementById('enlace-crear-categoria');
+    const crearNuevaCategoria = document.getElementById('crear-categoria');
+    const enlaceCrearSubcategoria = document.getElementById('enlace-crear-subcategoria');
+    const crearNuevaSubcategoria = document.getElementById('crear-subcategoria');
+    const enlaceCrearUsuario = document.getElementById('enlace-crear-usuario');
+    const crearUsuario = document.getElementById('crear-usuario');
+    const enlaceCambiarContrasenia = document.getElementById('enlace-cambiar-contraseña');
+    const crearNuevaContrasenia = document.getElementById('crear-nueva-contraseña');
 
     // --- Elementos del Formulario del Generador de Etiquetas ---
     const centroSelect = document.getElementById('centro');
@@ -34,10 +46,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const trazabilidadContainer = document.getElementById('trazabilidad-container');
     const numeroSerieInput = document.getElementById('numero-serie');
 
+    // ---Elementos de los formularios de ingreso
+    const nuevoMedicamentoInput = document.getElementById('medicamentoForm')
+    const nuevaMonodrogaInput = document.getElementById('monogrodaForm')
+    const nuevaCategoriaInput = document.getElementById('categoriaForm')
+    const nuevaSubcategoriaInput = document.getElementById('subcategoriaForm')
+
+    // --- Elementos del formulario "Crear Usuario"
+    const nombreInput = document.getElementById('nombre');
+    const apellidoInput = document.getElementById('apellido');
+    const emailInput = document.getElementById('email');
+    const areaTrabajoInput = document.getElementById('areaTrabajo');
+    const usuarioInput = document.getElementById('usuario');
+    const contraseniaInput = document.getElementById('contraseña');
+
+    // --- Elementos del formulario "cambiar Contraseña"
+    const usuarioBlanqueoInput = document.getElementById('usuarioBlanqueo')
+    const nuevaContraseniaInput = document.getElementById('nuevaContraseña')
+
     // --- Botones de Acción del Formulario ---
     const botonVerVistaPrevia = document.getElementById('boton-vista-previa');
     const botonImprimir = document.getElementById('boton-imprimir');
     const botonLimpiar = document.getElementById('boton-limpiar-formulario');
+    const botonCerrarEtiqueta = document.getElementById('cerrar-generador-etiquetas');
+    const botonCerrarMedicamento = document.getElementById('cerrar-medicamento');
+    const botonIngresarMedicamento = document.getElementById('boton-ingresar-medicamento');
+    const botonCerrarMonodroga = document.getElementById('cerrar-monodroga');
+    const botonIngresarMonodroga = document.getElementById('boton-ingresar-monodroga');
+    const botonCerrarCategoria = document.getElementById('cerrar-categoria');
+    const botonIngresarCategoria = document.getElementById('boton-ingresar-categoria');
+    const botonCerrarSubcategoria = document.getElementById('cerrar-subcategoria');
+    const botonIngresarSubcategoria = document.getElementById('boton-ingresar-subcategoria');
+    const botonCerrarUsuario = document.getElementById('cerrar-usuario');
+    const botonIngresarUsuario = document.getElementById('boton-ingresar-usuario');
+    const botonCerrarContrasenia = document.getElementById('cerrar-contraseña');
+    const botonIngresarContrasenia = document.getElementById('boton-ingresar-contraseña');
+
 
     // --- Elementos de la Sección de Previsualización ---
     const vistaPreviaSeccion = document.getElementById('vista-previa-etiqueta-seccion');
@@ -51,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewCodigoProducto = document.getElementById('preview-codigo-producto');
     const previewUsuario = document.getElementById('preview-usuario');
 
+    let formularioActivo = null;
 
     //-------------------------------------------------------------------
     // SECCIÓN 2: DEFINICIÓN DE FUNCIONES AUXILIARES
@@ -74,6 +119,124 @@ document.addEventListener('DOMContentLoaded', () => {
         previewsTextElements.forEach(span => { if (span) span.textContent = ''; });
     }
 
+    // --- Funcion para limpiar formularios de ingreso
+    function limpiarFormIngreso(input){
+        if (input){
+            input.value = ''
+        }
+    }
+
+    // --- Aplicar funcion de limpieza de ingreso
+
+
+    // -- Funcion para limpiar formulario crear usuario
+    function limpiarFormCrearUsuario(){
+        limpiarFormIngreso(nombreInput);
+        limpiarFormIngreso(apellidoInput);
+        limpiarFormIngreso(emailInput);
+        limpiarFormIngreso(areaTrabajoInput);
+        limpiarFormIngreso(contraseniaInput);
+        limpiarFormIngreso(usuarioInput);
+    }
+
+    // --- Funcion para limpiar el formulario cambiar contraseña
+    function limpiarFormCambiarContraseña(){
+        limpiarFormIngreso(usuarioBlanqueoInput);
+        limpiarFormIngreso(nuevaContraseniaInput)
+    }
+
+
+    // --- Logica para mostrar formulario
+    function mostrarFormulario(enlace, creador) {
+        if (enlace && creador) {
+            enlace.addEventListener('click', (event) => {
+                event.preventDefault();
+
+                // Si hay un formulario actualmente activo y no es el que se intenta abrir, ciérralo y límpialo
+                if (formularioActivo && formularioActivo !== creador) {
+                    formularioActivo.style.display = 'none'; // Oculta el formulario anterior
+
+                    // Llama a la función de limpieza específica del formulario que se acaba de cerrar
+                    // Utiliza el ID del formulario para determinar qué función de limpieza ejecutar
+                    switch (formularioActivo.id) {
+                        case enlaceGeneradorEtiquetas.id:
+                            limpiarCamposAutocompletadosYPreview();
+                            break;
+                        case crearNuevoMedicamento.id:
+                            limpiarFormIngreso(nuevoMedicamentoInput);
+                            break;
+                        case crearNuevaMonodroga.id:
+                            limpiarFormIngreso(nuevaMonodrogaInput);
+                            break;
+                        case crearNuevaCategoria.id:
+                            limpiarFormIngreso(nuevaCategoriaInput);
+                            break;
+                        case crearNuevaSubcategoria.id:
+                            limpiarFormIngreso(nuevaSubcategoriaInput);
+                            break;
+                        case crearUsuario.id:
+                            limpiarFormCrearUsuario();
+                            break;
+                        case crearNuevaContrasenia.id:
+                            limpiarFormCambiarContraseña();
+                            break;
+                        default:
+                            console.warn(`No hay función de limpieza definida para el formulario con ID: ${formularioActivo.id}`);
+                            break;
+                    }
+                }
+
+                // Muestra el formulario que se acaba de hacer clic
+                creador.style.display = 'block';
+
+                // Actualiza el formulario activo para el seguimiento
+                formularioActivo = creador;
+                console.log(`Formulario abierto: ${creador.id}`);
+            });
+        }
+    }
+
+    function cerrarFormulario(boton, creador) {
+        if (boton && creador) {
+            boton.addEventListener('click', () => {
+                creador.style.display = 'none'; // Oculta el formulario
+
+                // Si el formulario que se está cerrando era el activo, resetea la variable
+                if (formularioActivo === creador) {
+                    formularioActivo = null;
+                }
+
+                // Llama a la función de limpieza específica del formulario que se está cerrando
+                switch (formularioActivo.id) {
+                        case enlaceGeneradorEtiquetas.id:
+                            limpiarCamposAutocompletadosYPreview();
+                            break;
+                        case crearNuevoMedicamento.id:
+                            limpiarFormIngreso(nuevoMedicamentoInput);
+                            break;
+                        case crearNuevaMonodroga.id:
+                            limpiarFormIngreso(nuevaMonodrogaInput);
+                            break;
+                        case crearNuevaCategoria.id:
+                            limpiarFormIngreso(nuevaCategoriaInput);
+                            break;
+                        case crearNuevaSubcategoria.id:
+                            limpiarFormIngreso(nuevaSubcategoriaInput);
+                            break;
+                        case crearUsuario.id:
+                            limpiarFormCrearUsuario();
+                            break;
+                        case crearNuevaContrasenia.id:
+                            limpiarFormCambiarContraseña();
+                            break;
+                        default:
+                            console.warn(`No hay función de limpieza definida para el formulario con ID: ${formularioActivo.id}`);
+                            break;
+                }
+                console.log(`Formulario cerrado: ${creador.id}`);
+            });
+        }
+    }
 
     //-------------------------------------------------------------------
     // SECCIÓN 3: ASIGNACIÓN DE EVENT LISTENERS Y LÓGICA DE INICIALIZACIÓN
@@ -101,13 +264,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Lógica para Mostrar el Contenedor del Generador de Etiquetas ---
-    if (enlaceGeneradorEtiquetas && generadorEtiquetasContainer) {
-        enlaceGeneradorEtiquetas.addEventListener('click', (event) => {
-            event.preventDefault();
-            generadorEtiquetasContainer.style.display = 'block';
-        });
+    // Funcion para mostrar Formularios
+    
+
+    // Funcion para cerrar Formularios
+    function cerrarFormulario(boton, creador){
+        if (boton && creador) {
+            boton.addEventListener('click', () => {
+            creador.style.display = 'none';
+    });
     }
+    }
+
+    // --- Lógica para Mostrar y cerrar el Generador de Etiquetas ---
+    mostrarFormulario(enlaceGeneradorEtiquetas,generadorEtiquetasContainer);
+    cerrarFormulario(botonCerrarEtiqueta, generadorEtiquetasContainer);
+
+
+    // --- Lógica para mostrar y cerrar el formulario "Ingresar Medicamento"
+    mostrarFormulario(enlaceCrearMedicamento, crearNuevoMedicamento);
+    cerrarFormulario(botonCerrarMedicamento, crearNuevoMedicamento);
+
+    // --- Lógica para mostrar y cerrar el formulario "Ingresar Monodroga"
+    mostrarFormulario(enlaceCrearMonodroga, crearNuevaMonodroga);
+    cerrarFormulario(botonCerrarMonodroga, crearNuevaMonodroga);
+
+    // --- Logica para mostrar y cerrar el formulario "Ingresar Categoria"
+    mostrarFormulario(enlaceCrearCategoria, crearNuevaCategoria);
+    cerrarFormulario(botonCerrarCategoria, crearNuevaCategoria);
+
+    // --- Logica para mostrar y cerrar el formulario "Ingresar Subcategoria"
+    mostrarFormulario(enlaceCrearSubcategoria, crearNuevaSubcategoria);
+    cerrarFormulario(botonCerrarSubcategoria, crearNuevaSubcategoria);
+
+    // --- Logica para mostrar y cerrar el formulario "Crear nuevo Usuario"
+    mostrarFormulario(enlaceCrearUsuario, crearUsuario);
+    cerrarFormulario(botonCerrarUsuario, crearUsuario);
+
+    // --- Logica para mostrar y cerrar el formulario "Blanqueo de Contraseña"
+    mostrarFormulario(enlaceCambiarContrasenia, crearNuevaContrasenia);
+    cerrarFormulario(botonCerrarContrasenia, crearNuevaContrasenia);
 
     // --- Lógica para el Botón Limpiar Formulario ---
     if (botonLimpiar) {
@@ -305,4 +501,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-}); // Fin de DOMContentLoaded
+    //Funcionalidades del sidebar
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const hamburguer = document.querySelector('#toggle-btn');
+        hamburguer.addEventListener("click", function(){
+            document.querySelector("#sidebar").classList.toggle("expand");
+        });
+    });
+
+});

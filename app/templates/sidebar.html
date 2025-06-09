@@ -1,0 +1,108 @@
+<html>
+<head>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+</head>
+
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="menu-container">
+            <div class="header">
+                <div class="menu-btn" id="menu-btn" style="display: none; overflow: hidden;">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </div>
+                <div class="brand">
+                    <img src="/static/img/logoPrincipal.png" alt="Umbrella">
+                    <span>Umbrella</span>
+                </div>
+            </div>
+            <ul class="menu">
+                    <li class="menu-item menu-item-static">
+                        <a href="#" class="menu-link">
+                        <i class="fa-solid fa-tag"></i>
+                        <span>Generar Etiqueta</span>
+                        </a>
+                    </li>
+                    <li class="menu-item menu-item-dropdown">
+                        <a href="#" class="menu-link">
+                        <i class="fa-solid fa-prescription-bottle-medical"></i>
+                        <span>Medicamentos</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                        </a>
+                        <ul class="sub-menu">
+                            <li class="sub-menu-item">
+                                <span>Medicamento</span>
+                                <div class="sub-menu-icons">
+                                    <a href=""><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a href=""><i class="fa-solid fa-plus"></i></a>
+                                </div>
+                            </li>
+                            <li class="sub-menu-item">
+                                <span>Monodroga</span>
+                                <div class="sub-menu-icons">
+                                    <a href=""><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a href=""><i class="fa-solid fa-plus"></i></a>
+                                </div>
+                            </li>
+                            <li class="sub-menu-item">
+                                <span>Categoría</span>
+                                <div class="sub-menu-icons">
+                                    <a href=""><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a href=""><i class="fa-solid fa-plus"></i></a>
+                                </div>
+                            </li>
+                            <li class="sub-menu-item">
+                                <span>Subcategoría</span>
+                                <div class="sub-menu-icons">
+                                    <a href=""><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a href=""><i class="fa-solid fa-plus"></i></a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="menu-item menu-item-static">
+                        <a href="#" class="menu-link">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span>Informes</span>
+                        </a>
+                    </li>
+                    <li class="menu-item menu-item-dropdown">
+                        <a href="#" class="menu-link">
+                        <i class="fa-solid fa-user-tie"></i> 
+                        <span>Administración</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                        </a>
+                        <ul class="sub-menu">
+                            <li><a href="#" class="sub-menu-item">Crear Usuario</a></li>
+                            <li><a href="#" class="sub-menu-item">Cambiar Contraseña</a></li>
+                            <li><a href="#" class="sub-menu-item">Derechos de Usuarios</a></li>
+                        </ul>
+                    </li>
+            </ul>
+            
+            <div class="footer">
+                <ul class="menu">
+                    <li class="menu-item menu-item-static">
+                        <a href="#" class="menu-link">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Configuración</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="user">
+                    <div class="user-img">
+                        <img src="/static/img/user.png" alt="user">
+                    </div>
+                    <div class="user-data">
+                        <span class="name">Jloyo</span>
+                    </div>
+                    <div class="user-icon">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+</body>
+
+</html>

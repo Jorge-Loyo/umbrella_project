@@ -1,0 +1,343 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+* {
+    font-family: "Poppins", sans-serif;
+}
+
+/*
+:root {
+    --color-bg: #EBECF2;
+    --color-surface: #ffffff60;
+    --color-border: #9A9EB2;
+    --color-text-primary: #000;
+    --color-text-secondary: #3F435D;
+    --color-tooltip-bg: #2A2E33;
+    --color-tooltip-text: #fff;
+    --shadow-border: rgba(0, 0, 0, 0.1);
+    --user-bg-color: #FAFAFC;
+}
+/* Body 
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-bg);
+} */
+
+::after,
+::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+.wrapper {
+    display: flex;
+}
+
+#sidebar{
+    width: 70px;
+    min-width: 70px;
+    z-index: 1000;
+    transition: all 0.25s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f4f4;
+    border-right: #474747 1px solid transparent;
+    box-shadow: 0 0 10px 5px #474747;
+}
+
+#sidebar.expand {
+    width: 260px;
+    min-width: 260px;
+}
+
+#toggle-btn {
+    background-color: transparent;
+    cursor: pointer;
+    border: 0;
+    padding: 1rem 1rem;
+}
+
+.sidebar-logo {
+    margin: 15px 0 0 5px;
+}
+
+.sidebar-logo a {
+    color: #1f1f1f;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+#sidebar:not(.expand) .sidebar-logo,
+#sidebar:not(.expand) a.sidebar-link span {
+    display: none;
+}
+
+.sidebar-nav{
+    display: flex;
+    flex-direction: column;
+    margin-top: 3rem;
+    padding: 2rem 0;
+    flex: 1 1 auto;
+    gap: 1.5rem;
+}
+
+a.sidebar-link {
+    padding: .625rem 1.625rem;
+    color: #252525;
+    display: block;
+    font-size: 1.2rem;
+    white-space: nowrap;
+    border-left: 3px solid transparent;
+    text-decoration: none;
+}
+
+.sidebar-link i {
+    font-size: 1.5rem;
+    margin-right: .75rem;
+}
+
+.sidebar-link span {
+    text-decoration: none;
+}
+
+a.sidebar-link:hover,
+.item-icon:hover {
+    background-color: #7f7f7f32;
+    border-left: 4px solid #797979;
+}
+
+.sidebar-item {
+    position: relative;
+}
+
+
+.item-icon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    padding: .625rem 0.8rem .625rem 1.625rem;
+    text-decoration: none;
+    color: #1f1f1f;
+}
+
+
+.item-icon i{
+    font-size: 1rem;
+    color: #e62a2a;
+}
+
+#logOut,
+#logOutText {
+    color: #e62a2a;
+}
+
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after{
+    border: solid;
+    border-width: 0 .075rem .075rem 0;
+    content: "";
+    display: inline-block;
+    padding: 2px;
+    position: absolute;
+    right: 1.5rem;
+    top: 1.4rem;
+    transform: rotate(-135deg);
+    transition: all .2s ease-out;
+}
+
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after{
+    transform: rotate(-45deg);
+    transition: all .2s ease-out;
+}
+
+#sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
+    position: absolute;
+    top: 0;
+    left: 70px;
+    background-color: #f4f4f4;
+    padding: 0;
+    min-width: 15rem;
+    display: none;
+    transition: all 0.5s ease;
+}
+
+#sidebar:not(.expand) .sidebar-item:hover .has-dropdown+ .sidebar-dropdown {
+    display: block;
+    max-height: 15rem;
+    width: 100%;
+    opacity: 1;
+}
+
+.d-flex {
+    margin-top: 15px;
+    margin-left: 3px;
+}
+
+.sidebar-logo-img {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 40%;
+    rotate: 45deg;
+}
+
+.main {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    transition: all 0.35 ease-in-out;
+    position: relative;
+}
+
+.content-video {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    object-fit: cover;
+    display: block;
+}
+/* GENERADOR DE ETIQUETAS */
+
+.form-container {
+    position: absolute;
+    top: 50%;
+    left: calc(50%); /* 8rem = 16rem / 2, ajusta según ancho del sidebar */
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.95); /* fondo semitransparente */
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 750px;
+    width: 95%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    z-index: 10;
+    transition: all 0.35s ease-in-out;
+}
+
+.mb-3 {
+    position: relative; 
+}
+
+/* Estilos para el contenedor de las sugerencias */
+.sugerencias-container-estilo {
+    position: absolute; 
+    top: 100%; 
+    left: 0; 
+    width: 100%; 
+    background-color: #fff;
+    border: 1px solid #ccc; 
+    border-radius: 0 0 5px 5px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100; 
+    max-height: 200px; 
+    overflow-y: auto; 
+    display: none; 
+}
+
+/* Estilos individuales para cada sugerencia */
+.sugerencia-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.sugerencia-item:last-child {
+    border-bottom: none; 
+}
+
+.sugerencia-item:hover {
+    background-color: #f0f0f0;
+}
+
+.titulo-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.titulo-container h2 {
+    font-size: 1.5rem;
+}
+
+#cerrar-generador-etiquetas,
+#cerrar-medicamento,
+#cerrar-monodroga,
+#cerrar-categoria,
+#cerrar-subcategoria,
+#cerrar-usuario,
+#cerrar-contraseña {
+    position: absolute; /* Saca el botón del flujo normal del documento */
+    top: 12px; /* Distancia desde el borde superior del contenedor */
+    right: 12px;
+    padding: .25rem .5rem; /* Reduce el padding: arriba/abajo .25rem, izquierda/derecha .5rem */
+    font-size: .875rem; /* Reduce el tamaño de la fuente para que el botón sea más compacto */
+    line-height: 1; /* Ayuda a que el contenido interno se centre */
+    height: auto; /* Asegúrate de que no tenga una altura fija de Bootstrap que lo agrande */
+    display: flex; /* Convierte el botón en un flex container para centrar su propio icono */
+    align-items: center; /* Centra verticalmente el icono dentro del botón */
+    justify-content: center; /* Centra horizontalmente el icono dentro del botón */
+}
+
+/* Ajusta el tamaño del icono dentro del botón si es necesario */
+#cerrar-generador-etiquetas i.fa-xmark,
+#cerrar-medicamento i.fa-xmark,
+#cerrar-monodroga i.fa-xmark,
+#cerrar-categoria i.fa-xmark,
+#cerrar-subcategoria i.fa-xmark,
+#cerrar-usuario i.fa-xmark,
+#cerrar-contraseña i.fa-xmark   {
+    font-size: 1rem; /* Un tamaño adecuado para el icono en un botón más pequeño */
+}
+
+/* Para el h2, puedes asegurarte de que no tiene un margen inferior excesivo si es la causa */
+.mb-4 { /* Esta es la clase de Bootstrap */
+    margin-bottom: 0 !important; /* Si quieres eliminar el margen inferior que Bootstrap le da al h2 */
+    /* O puedes usar un valor más pequeño: margin-bottom: .5rem !important; */
+}
+
+.form-container-small {
+    position: absolute;
+    top: 50%;
+    left: calc(50%); /* 8rem = 16rem / 2, ajusta según ancho del sidebar */
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.95); /* fondo semitransparente */
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 95%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    z-index: 10;
+    transition: all 0.35s ease-in-out;
+}
+
+.form-container-medium {
+    position: absolute;
+    top: 50%;
+    left: calc(50%); /* 8rem = 16rem / 2, ajusta según ancho del sidebar */
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.95); /* fondo semitransparente */
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 700px;
+    width: 95%;
+    box-shadow: 0 0 20px #0000004d;
+    z-index: 10;
+    transition: all 0.35s ease-in-out;
+}

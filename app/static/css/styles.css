@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+* {
+    font-family: "Poppins", sans-serif;
+}
+
 body {
     font-family: sans-serif;
     margin: 0;
@@ -39,22 +45,14 @@ body {
     visibility: hidden;
 }
 
-.welcome-image {
+.welcome-image  {
     width: 100%;
     height: auto;
-    max-height: 80vh;
+    max-height: 100vh;
     object-fit: cover;
+    display: block;
     margin-bottom: 0;
     /* Elimina el margen inferior para que esté más cerca del texto si es necesario */
-}
-
-.welcome-message {
-    font-size: 2em;
-    text-align: center;
-    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
-    white-space: nowrap;
-    margin-bottom: 0;
-    /* Elimina el margen inferior del mensaje dentro de su contenedor */
 }
 
 .logo {
@@ -129,6 +127,8 @@ body {
     font-size: 1em;
     width: 100%;
     transition: background-color 0.3s ease;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .login-button:hover {
@@ -139,100 +139,107 @@ body {
     display: none !important;
 }
 
-/* Estilos de fuente */
-.welcome-message {
-    font-size: 2em;
-    /* Puedes ajustar este tamaño */
-    color: #000;
-    /* Color base para "Bienvenido a" */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    overflow: hidden; /* Evita barras de desplazamiento si la imagen es muy grande */
+    min-height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    display: flex; /* Para centrar el welcome-overlay-container y luego el login-container */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+
+    /* ¡AQUÍ ESTÁ LA CLAVE! Mueve la imagen de fondo al body */
+    background-image: url('https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+    background-size: cover; /* Asegura que la imagen cubra todo el contenedor */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+}
+
+/* Eliminar estos estilos ya que la imagen de bienvenida no se usará así */
+.welcome-image {
+    display: none; /* Ya no necesitamos esta imagen HTML */
+}
+
+/* Eliminar estos estilos ya que welcome-container ya no se usará así */
+.welcome-container {
+    display: none; /* Este contenedor ya no es necesario */
+}
+
+
+/* Estilos para el nuevo cuadro flotante de bienvenida */
+.welcome-overlay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4); /* Un overlay oscuro y semitransparente sobre el fondo */
+    z-index: 999;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+.welcome-box {
+    background-color: rgba(255, 255, 255, 0.827); /* Fondo blanco casi opaco para el cuadro */
+    padding: 40px 50px; /* Aumentar el padding para más espacio interno */
+    border-radius: 18px; /* Un poco más de redondez para suavizar */
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3); /* Sombra más grande y prominente para un efecto "flotante" */
     text-align: center;
-    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
-    white-space: nowrap;
-    /* Evita que el texto se rompa inesperadamente */
+    max-width: 90%; /* Ajuste para pantallas pequeñas */
+    box-sizing: border-box;
+    display: flex; /* Usar flexbox para organizar los elementos internos */
+    flex-direction: column; /* Apilar elementos verticalmente */
+    align-items: center; /* Centrar horizontalmente los elementos hijos */
+    justify-content: center; /* Centrar verticalmente el contenido */
 }
 
-.welcome-message>span {
-    /* Estilos para "Umbrella" */
-    font-family: '1651 Alchemy Normal', sans-serif;
-    /* Asegúrate de que esta fuente esté disponible o usa una similar */
-    font-size: 3em;
-    /* Un tamaño mayor para "Umbrella" */
-    font-weight: bold;
-    color: red;
-    /* Color rojo */
-    text-shadow: 2px 2px 4px #000000;
-    /* Sombra negra */
+/* Nuevos estilos para el texto y logo dentro del cuadro de bienvenida */
+.welcome-message-box {
+    font-size: 2.8em; /* Aumentar el tamaño general del h1 para que todo sea más grande */
+    color: #333; /* Un gris oscuro en lugar de negro puro para suavizar */
+    margin-bottom: 25px; /* Espacio adicional debajo del mensaje completo */
+    line-height: 1.2; /* Ajustar el interlineado para que "Bienvenido a" y "Umbrella" no estén tan apretados */
 }
 
-.welcome-message>img.umbrella-logo {
-    /* Estilos para el logo en la bienvenida */
+.welcome-text-box {
+    font-family: 'Poppins', sans-serif; /* Asegúrate de que esta fuente esté cargada */
+    font-size: 1.2em; /* Relativo al .welcome-message-box, esto lo hará más pequeño pero no minúsculo */
+    color: #303030; /* Un gris más suave */
+    display: block;
+    margin-bottom: 0.1em; /* Un pequeño margen para separar "Bienvenido a" de la siguiente línea */
+}
+
+.umbrella-logo-box {
     height: auto;
-    /* Ajusta la altura automáticamente */
     width: auto;
-    /* Ajusta el ancho automáticamente */
-    max-height: 4em;
-    /* Limita la altura máxima */
+    max-height: 2.8em; /* Ajusta el tamaño del logo, relativo a la fuente de Umbrella */
     vertical-align: middle;
-    /* Alinea verticalmente con el texto */
-    margin: 0 10px;
-    /* Espacio alrededor del logo */
+    margin: 10px; /* Más espacio a los lados del logo */
+    padding-right: 20px;
     display: inline-block;
-    /* Permite ajustar el margen */
+
+    position: relative; /* Permite ajustar con top */
+    top: -0.65em; 
 }
 
-.welcome-message:first-child {
-    /* Estilos para "Bienvenido a" */
-    font-family: '1651 Alchemy Normal', sans-serif;
-    /* Asegúrate de que esta fuente esté disponible */
-    font-size: 2.5em;
-    /* Tamaño para "Bienvenido a" */
-    color: black;
-    /* Color negro */
-}
-
-/* Estilos de fuente */
-.welcome-message {
-    font-size: 2em;
-    /* Puedes ajustar este tamaño */
-    text-align: center;
-    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
-    white-space: nowrap;
-    /* Evita que el texto se rompa inesperadamente */
-}
-
-.welcome-text {
+.logo-box {
     font-family: 'UnifrakturMaguntia', cursive;
-    /* Cambia la fuente */
-    font-size: 2.5em;
-    color: black;
-}
-
-.welcome-message>span.logo {
-    font-family: 'UnifrakturMaguntia', cursive;
-    /* Cambia la fuente */
-    font-size: 3em;
+    font-size: 2.8em; /* Aumentar el tamaño de "Umbrella" para que tenga más impacto */
     font-weight: normal;
-    /* La fuente ya es "negrita" */
     color: red;
-    text-shadow: 2px 2px 4px #000000;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.6); /* Sombra más grande y oscura para que resalte */
+    white-space: nowrap; /* Asegura que "Umbrella" con el logo no se rompa */
 }
 
-.welcome-message>img.umbrella-logo {
-    /* Estilos para el logo en la bienvenida */
-    height: auto;
-    width: auto;
-    max-height: 2em;
-    vertical-align: middle;
-    /* Alinea verticalmente con el texto */
-    margin: 0 10px;
-    /* Espacio alrededor del logo */
-    display: inline-block;
-}
 
 .login-title {
     font-size: 1.8em;
     color: #333;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
     text-align: center;
     white-space: nowrap;
 }
@@ -240,11 +247,13 @@ body {
 .logo-title {
     font-family: 'UnifrakturMaguntia', cursive;
     /* Cambia la fuente */
-    font-size: 2.5em;
+    font-size: 3em;
     font-weight: normal;
     /* La fuente ya es "negrita" */
     color: red;
     text-shadow: 2px 2px 4px #000000;
+    text-align: center;
+    margin-top: 10px;
 }
 
 .login-title>img.umbrella-logo-title {
@@ -258,6 +267,7 @@ body {
     /* Espacio a la derecha del logo */
     display: inline-block;
 }
+
 
 .umbrella-logo {
     width: auto;

@@ -30,6 +30,12 @@ def menu():
 
     return render_template('menu.html', title='Menú Principal', user=current_user, centros=lista_centros)
 
+@bp.route('/base')
+@login_required
+def base():
+    current_app.logger.info(f"Usuario '{current_user.username}' accediendo a la base.")
+    return render_template('base.html', title='Base de Datos', user=current_user)
+
 @bp.route('/buscar_medicamentos')
 @login_required
 def buscar_medicamentos():
