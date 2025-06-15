@@ -34,7 +34,22 @@ def menu():
 @login_required
 def base():
     current_app.logger.info(f"Usuario '{current_user.username}' accediendo a la base.")
-    return render_template('base.html', title='Base de Datos', user=current_user)
+
+    db = get_db()
+    lista_centros = []
+    try:
+        centros_cursor = db.centros.find().sort("nombre", 1)
+        for centro in centros_cursor:
+            lista_centros.append({
+                "id": centro.get("id_sucursal_original"),
+                "nombre": centro.get("nombre")
+            })
+        current_app.logger.debug(f"Centros cargados para el menú: {lista_centros}")
+    except Exception as e:
+        current_app.logger.error(f"Error al cargar centros desde MongoDB: {e}")
+        flash("Error al cargar la lista de centros.", "danger") # Necesitas importar flash de flask
+
+    return render_template('base.html', title='Menú Principal', user=current_user, centros=lista_centros)
 
 @bp.route('/buscar_medicamentos')
 @login_required

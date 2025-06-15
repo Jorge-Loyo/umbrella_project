@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel='stylesheet'>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 
 <body>
@@ -108,7 +108,7 @@
 
             <div class="form-container" style="display: none;" id="generador-etiquetas-container">
                 <button type="button" class="btn btn-primary" id="cerrar-generador-etiquetas" aria-label="Cerrar">
-                        <i class="fa-solid fa-xmark"></i>
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="titulo-container">
                     <h2 class="mb-4">Generador de Etiquetas</h2>
@@ -192,45 +192,97 @@
                 </form>
             </div>
 
-            <div class="form-container-small" style="display: none;" id="crear-medicamento">
+            <div class="form-container" style="display: none;" id="crear-medicamento">
                 <button type="button" class="btn btn-primary" id="cerrar-medicamento" aria-label="Cerrar">
-                        <i class="fa-solid fa-xmark"></i>
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="titulo-container">
                     <h2 class="mb-4">Ingresar nuevo Medicamento</h2>
                 </div>
                 <form>
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="nombreMedicamento" class="form-label">Nombre:</label>
+                            <input type="text" id="nombreMedicamento" name="nombreMedicamento" class="form-control"
+                                autocomplete="off" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="codigoMedicamento" class="form-label">Código:</label>
+                            <input type="text" id="codigoMedicamento" name="codigoMedicamento" class="form-control"
+                                autocomplete="off" required>
+                        </div>
+                    </div>
                     <div class="mb-3">
-                        <label for="medicamentoForm" class="form-label">Medicamento:</label>
-                        <input type="text" id="medicamentoForm" name="medicamentoForm" class="form-control" autocomplete="off" required>
+                        <label for="laboratorioMedicamento" class="form-label">Laboratorio:</label>
+                        <input type="text" id="laboratorioMedicamento" name="laboratorioMedicamento"
+                            class="form-control" autocomplete="off" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="monodrogaMedicamento" class="form-label">Monodroga:</label>
+                            <select id="monodrogaMedicamento" name="monodrogaMedicamento" class="form-select"
+                                autocomplete="off" required></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="monodCodigoMedicamento" class="form-label">Código:</label>
+                            <input type="text" id="monodCodigoMedicamento" name="monodCodigoMedicamento"
+                                class="form-control" autocomplete="off" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="presentacionMonodroga" class="form-label">Presentación:</label>
+                            <input type="text" id="presentacionMonodroga" name="presentacionMonodroga"
+                                class="form-control" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="categoriaMedicamento" class="form-label">Categoría:</label>
+                            <select id="categoriaMedicamento" name="categoriaMedicamento" class="form-select"
+                                autocomplete="off" required></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="subcategoriaMedicamento" class="form-label">Subcategoría:</label>
+                            <select id="subcategoriaMedicamento" name="subcategoriaMedicamento" class="form-select"
+                                autocomplete="off" required></select>
+                        </div>
                     </div>
                     <div class="mt-4">
-                            <button type="button" id="boton-ingresar-medicamento" class="btn btn-primary me-2">Ingresar</button>
+                        <button type="button" id="boton-ingresar-medicamento"
+                            class="btn btn-primary me-2">Ingresar</button>
                     </div>
                 </form>
             </div>
 
-            <div class="form-container-small" style="display: none;" id="crear-monodroga">
+            <div class="form-container-medium" style="display: none;" id="crear-monodroga">
                 <button type="button" class="btn btn-primary" id="cerrar-monodroga" aria-label="Cerrar">
-                        <i class="fa-solid fa-xmark"></i>
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="titulo-container">
                     <h2 class="mb-4">Ingresar nueva Monodroga</h2>
                 </div>
                 <form>
-                    <div class="mb-3">
-                        <label for="monodrogaForm" class="form-label">Monodroga:</label>
-                        <input type="text" id="monodrogaForm" name="monodrogaForm" class="form-control" autocomplete="off" required>
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="monodrogaForm" class="form-label">Monodroga:</label>
+                            <input type="text" id="monodrogaForm" name="monodrogaForm" class="form-control"
+                                autocomplete="off" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="monodrogaFormCod" class="form-label">Código:</label>
+                            <input type="text" id="monodrogaFormCod" name="monodrogaFormCod" class="form-control"
+                                autocomplete="off" required>
+                        </div>
                     </div>
                     <div class="mt-4">
-                            <button type="button" id="boton-ingresar-monodroga" class="btn btn-primary me-2">Ingresar</button>
+                        <button type="button" id="boton-ingresar-monodroga"
+                            class="btn btn-primary me-2">Ingresar</button>
                     </div>
                 </form>
             </div>
 
             <div class="form-container-small" style="display: none;" id="crear-categoria">
                 <button type="button" class="btn btn-primary" id="cerrar-categoria" aria-label="Cerrar">
-                        <i class="fa-solid fa-xmark"></i>
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="titulo-container">
                     <h2 class="mb-4">Ingresar nueva Categoría</h2>
@@ -238,17 +290,19 @@
                 <form>
                     <div class="mb-3">
                         <label for="categoriaForm" class="form-label">Categoría:</label>
-                        <input type="text" id="categoriaForm" name="categoriaForm" class="form-control" autocomplete="off" required>
+                        <input type="text" id="categoriaForm" name="categoriaForm" class="form-control"
+                            autocomplete="off" required>
                     </div>
                     <div class="mt-4">
-                            <button type="button" id="boton-ingresar-categoria" class="btn btn-primary me-2">Ingresar</button>
+                        <button type="button" id="boton-ingresar-categoria"
+                            class="btn btn-primary me-2">Ingresar</button>
                     </div>
                 </form>
             </div>
 
             <div class="form-container-small" style="display: none;" id="crear-subcategoria">
                 <button type="button" class="btn btn-primary" id="cerrar-subcategoria" aria-label="Cerrar">
-                        <i class="fa-solid fa-xmark"></i>
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="titulo-container">
                     <h2 class="mb-4">Ingresar nueva Subcategoría</h2>
@@ -256,17 +310,19 @@
                 <form>
                     <div class="mb-3">
                         <label for="SubcategoriaForm" class="form-label">Subcategoría:</label>
-                        <input type="text" id="subcategoriaForm" name="subcategoriaForm" class="form-control" autocomplete="off" required>
+                        <input type="text" id="subcategoriaForm" name="subcategoriaForm" class="form-control"
+                            autocomplete="off" required>
                     </div>
                     <div class="mt-4">
-                            <button type="button" id="boton-ingresar-subcategoria" class="btn btn-primary me-2">Ingresar</button>
+                        <button type="button" id="boton-ingresar-subcategoria"
+                            class="btn btn-primary me-2">Ingresar</button>
                     </div>
                 </form>
             </div>
 
             <div class="form-container-medium" style="display: none;" id="crear-usuario">
                 <button type="button" class="btn btn-primary" id="cerrar-usuario" aria-label="Cerrar">
-                        <i class="fa-solid fa-xmark"></i>
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="titulo-container">
                     <h2 class="mb-4">Crear nuevo Usuario</h2>
@@ -275,11 +331,13 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="monodroga" class="form-label">Nombre:</label>
-                            <input type="text" id="nombre" name="nombre" class="form-control" autocomplete="off" required>
+                            <input type="text" id="nombre" name="nombre" class="form-control" autocomplete="off"
+                                required>
                         </div>
                         <div class="col-md-6">
                             <label for="presentacion" class="form-label">Apellido:</label>
-                            <input type="text" id="apellido" name="apellido" class="form-control" autocomplete="off" required>
+                            <input type="text" id="apellido" name="apellido" class="form-control" autocomplete="off"
+                                required>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -289,17 +347,20 @@
                         </div>
                         <div class="col-md-4">
                             <label for="areaTrabajo" class="form-label">Área de trabajo:</label>
-                            <input type="text" id="areaTrabajo" name="areaTrabajo" class="form-control" autocomplete="off" required>
+                            <input type="text" id="areaTrabajo" name="areaTrabajo" class="form-control"
+                                autocomplete="off" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="usuario" class="form-label">Nombre de Usuario:</label>
-                            <input type="text" id="usuario" name="usuario" class="form-control" autocomplete="off" required>
+                            <input type="text" id="usuario" name="usuario" class="form-control" autocomplete="off"
+                                required>
                         </div>
                         <div class="col-md-6">
                             <label for="contraseña" class="form-label">Contraseña:</label>
-                            <input type="text" id="contraseña" name="contraseña" class="form-control" autocomplete="off" required>
+                            <input type="text" id="contraseña" name="contraseña" class="form-control" autocomplete="off"
+                                required>
                         </div>
                     </div>
                     <div class="mt-4">
@@ -310,7 +371,7 @@
 
             <div class="form-container-small" style="display: none;" id="crear-nueva-contraseña">
                 <button type="button" class="btn btn-primary" id="cerrar-contraseña" aria-label="Cerrar">
-                        <i class="fa-solid fa-xmark"></i>
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="titulo-container">
                     <h2 class="mb-4">Blanqueo de Contraseña</h2>
@@ -318,18 +379,74 @@
                 <form>
                     <div class="mb-3">
                         <label for="usuarioBlanqueo" class="form-label">Usuario:</label>
-                        <input type="text" id="usuarioBlanqueo" name="usuarioBlanqueo" class="form-control" autocomplete="off" required>
+                        <input type="text" id="usuarioBlanqueo" name="usuarioBlanqueo" class="form-control"
+                            autocomplete="off" required>
                     </div>
                     <div class="mb-3">
                         <label for="nuevaContraseña" class="form-label">Nueva Contraseña:</label>
-                        <input type="text" id="nuevaContraseña" name="nuevaContraseña" class="form-control" autocomplete="off" required>
+                        <input type="text" id="nuevaContraseña" name="nuevaContraseña" class="form-control"
+                            autocomplete="off" required>
                     </div>
                     <div class="mt-4">
-                            <button type="button" id="boton-ingresar-contraseña" class="btn btn-primary me-2">Cambiar</button>
+                        <button type="button" id="boton-ingresar-contraseña"
+                            class="btn btn-primary me-2">Cambiar</button>
                     </div>
                 </form>
             </div>
 
+        </div>
+    </div>
+
+    <!--Modal Para imprimir Etiqueta-->
+
+    <div class="modal fade" id="modalVistaPreviaEtiqueta" tabindex="-1" aria-labelledby="modalVistaPreviaEtiquetaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalVistaPreviaEtiquetaLabel">Vista Previa de Etiqueta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="label-preview-container">
+                        <div class="label-content">
+                            <div class="label-header">
+                                <span id="preview-centro" class="label-centro"></span>
+                            </div>
+
+                            <div class="label-main-details">
+                                <p class="medicamento-nombre"><strong id="preview-medicamento-nombre"></strong></p>
+                                <p><strong>Monodroga:</strong> <span id="preview-monodroga"></span></p>
+                                <p><strong>Presentación:</strong> <span id="preview-presentacion"></span></p>
+                                <div class="lote-vencimiento">
+                                    <p><strong>Lote:</strong> <span id="preview-lote"></span></p>
+                                    <p><strong>Venc:</strong> <span id="preview-vencimiento"></span></p>
+                                </div>
+                            </div>
+
+                            <div class="label-bottom-section">
+                                <div class="label-qr-code-wrapper">
+                                    <div id="qrcode-preview-area-modal"></div>
+                                </div>
+                                <div class="label-icons-container">
+                                    <img src="/static/img/icono1.png" alt="Cardiología" class="label-icon">
+                                    <img src="/static/img/icono2.png" alt="Caída" class="label-icon">
+                                    <img src="/static/img/icono3.png" alt="Pulmones" class="label-icon">
+                                    <img src="/static/img/icono4.png" alt="Goteo IV" class="label-icon">
+                                </div>
+                            </div>
+
+                            <div class="label-footer">
+                                <span id="preview-usuario" class="label-usuario"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="boton-imprimir-modal">Imprimir Etiqueta</button>
+                </div>
+            </div>
         </div>
     </div>
 

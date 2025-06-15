@@ -46,9 +46,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const trazabilidadContainer = document.getElementById('trazabilidad-container');
     const numeroSerieInput = document.getElementById('numero-serie');
 
-    // ---Elementos de los formularios de ingreso
+    // ---Elementos de los formularios de ingreso de Medicamentos
+    const nombreMedicamento = document.getElementById('nombreMedicamento') 
+    const codigoMedicamento = document.getElementById('codigoMedicamento')
+    const laboratorioMedicamento = document.getElementById('laboratorioMedicamento')
+    const monodrogaMedicamento = document.getElementById('monodrogaMedicamento')
+    const monodCodMedicamento = document.getElementById('monodCodigoMedicamento')
+    const presentacionMonodroga = document.getElementById('presentacionMonodroga')
+    const categoriaMedicamento = document.getElementById('categoriaMedicamento')
+    const subcategoriaMedicamento = document.getElementById('subcategoriaMedicamento')
+
     const nuevoMedicamentoInput = document.getElementById('medicamentoForm')
     const nuevaMonodrogaInput = document.getElementById('monogrodaForm')
+    const nuevaMonodrodaInputDos = document.getElementById('monogrodaFormCod')
     const nuevaCategoriaInput = document.getElementById('categoriaForm')
     const nuevaSubcategoriaInput = document.getElementById('subcategoriaForm')
 
@@ -81,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const botonIngresarUsuario = document.getElementById('boton-ingresar-usuario');
     const botonCerrarContrasenia = document.getElementById('cerrar-contraseña');
     const botonIngresarContrasenia = document.getElementById('boton-ingresar-contraseña');
+    const videoBackground = document.getElementById('video-background');
 
 
     // --- Elementos de la Sección de Previsualización ---
@@ -94,6 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewVencimiento = document.getElementById('preview-vencimiento');
     const previewCodigoProducto = document.getElementById('preview-codigo-producto');
     const previewUsuario = document.getElementById('preview-usuario');
+
+    const modalVistaPreviaEtiqueta = new bootstrap.Modal(document.getElementById('modalVistaPreviaEtiqueta'));
+    const qrcodePreviewAreaModal = document.getElementById('qrcode-preview-area-modal');
+    const botonImprimirModal = document.getElementById('boton-imprimir-modal'); // Botón de imprimir dentro del modal
 
     let formularioActivo = null;
 
@@ -347,6 +362,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    
+
     // --- Lógica Principal: Autocompletado de Medicamentos ---
     if (medicamentoInput && sugerenciasContainer) {
         // Se activa cada vez que el usuario escribe en el campo "Medicamento"
@@ -427,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Lógica para el Botón 'Ver vista previa' y Generación de QR ---
-    if (botonVerVistaPrevia) {
+    /*if (botonVerVistaPrevia) {
         botonVerVistaPrevia.addEventListener('click', () => {
             console.log("Botón 'Ver vista previa' clickeado.");
 
@@ -489,7 +506,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Elemento '#qrcode-preview-area' no encontrado al generar QR.");
             }
         });
+    }*/
+
+    if (botonVerVistaPrevia) {
+    botonVerVistaPrevia.addEventListener('click', () => {
+        console.log("Botón 'Ver vista previa' clickeado.");
+
+        // Recopilar datos del formulario para la etiqueta
+        const nombreMedicamentoForm = medicamentoInput ? medicamentoInput.value.trim() : "N/A";
+        const codigoProductoForm = codigoInput ? codigoInput.value.trim() : "";
+        const nombreMonodrogaForm = monodrogaInput ? monodrogaInput.value.trim() : "N/A";
+        const descPresentacionForm = presentacionInput ? presentacionInput.value.trim() : "N/A";
+        const numeroLoteForm = loteInput ? loteInput.value.trim() : "";
+        const fechaVencimientoValueForm = vencimientoInput ? vencimientoInput.value : "";
+        const centroNombreForm = (centroSelect && centroSelect.selectedIndex >= 0 && centroSelect.options[centroSelect.selectedIndex].value !== "") ? centroSelect.options[centroSelect.selectedIndex].text : "N/A";
+        const nombreUsuario = document.body.dataset.username || 'N/A'; // Lee desde data-attribute
+
+        // Validaciones (estas ya las tenías, ¡genial!)
+        if (!codigoProductoForm) { alert("Selecciona un medicamento para obtener el código del producto."); return; }
+        if (!numeroLoteForm) { alert("Ingresa el número de lote."); loteInput.focus(); return; }
+        if (!fechaVencimientoValueForm) { alert("Selecciona la fecha de vencimiento."); vencimientoInput.focus(); return; }
+
+        // Generar el string para el QR
+        const fechaVencimientoFormateadaParaQR = fechaVencimientoValueForm.replace(/-/g, '');
+        const qrCodeString = `<span class="math-inline">\{codigoProductoForm\}\|</span>{numeroLoteForm}|${fechaVencimientoFormateadaParaQR}`;
+        console.log("String para el QR:", qrCodeString);
+
+        // --- Llenar los campos de la previsualización DENTRO DEL MODAL ---
+        // Asegúrate de que los IDs aquí (previewCentro, previewMedicamentoNombre, etc.)
+        // existan en el HTML de tu MODAL.
+        if (previewCentro) previewCentro.textContent = centroNombreForm;
+        if (previewMedicamentoNombre) previewMedicamentoNombre.textContent = nombreMedicamentoForm;
+        if (previewMonodroga) previewMonodroga.textContent = nombreMonodrogaForm;
+        if (previewPresentacion) previewPresentacion.textContent = descPresentacionForm;
+        if (previewLote) previewLote.textContent = numeroLoteForm;
+        if (previewVencimiento) previewVencimiento.textContent = fechaVencimientoValueForm;
+        if (previewCodigoProducto) previewCodigoProducto.textContent = codigoProductoForm;
+        if (previewUsuario) previewUsuario.textContent = `Prep: ${nombreUsuario}`;
+
+
+        // --- Generar el QR DENTRO DEL MODAL ---
+        // Usa 'qrcodePreviewAreaModal' que es el div dentro del modal
+        if (qrcodePreviewAreaModal) {
+            qrcodePreviewAreaModal.innerHTML = ''; // Limpiar el div antes de generar
+            try {
+                new QRCode(qrcodePreviewAreaModal, { // <-- ¡Aquí usamos el nuevo ID!
+                    text: qrCodeString,
+                    width: 60, 
+                    height: 60,
+                    colorDark: "#000000", colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+                console.log("Código QR generado en el modal.");
+
+                // Ya no necesitas manipular 'botonImprimir' (el del formulario principal)
+                // El botón de imprimir estará en el modal.
+
+                // --- ¡NUEVO! Muestra el Modal de Bootstrap ---
+                modalVistaPreviaEtiqueta.show(); // <-- ¡Así se muestra el modal!
+
+            } catch (error) {
+                console.error("Error al generar el código QR en el modal:", error);
+                if (qrcodePreviewAreaModal) qrcodePreviewAreaModal.innerHTML = 'Error QR';
+                // Si tienes un botón de imprimir en el modal, podrías deshabilitarlo aquí
+                if (botonImprimirModal) botonImprimirModal.disabled = true;
+            }
+            } else {
+                console.error("Elemento '#qrcode-preview-area-modal' no encontrado al generar QR.");
+            }
+    });
     }
+    // ... (el resto de tu script, incluyendo el listener para botonImprimir, que ahora será el del modal) ...
 
     // --- Lógica para el Botón Imprimir ---
     if (botonImprimir) {
@@ -498,6 +585,57 @@ document.addEventListener('DOMContentLoaded', () => {
             // Aquí irá la lógica futura para la impresión (ej. generar archivo para NiceLabel o window.print())
             // Por ahora, solo abre el diálogo de impresión del navegador
             window.print();
+        });
+    }
+
+    // --- Lógica para el Botón Imprimir DENTRO DEL MODAL ---
+    if (botonImprimirModal) { // <-- Ahora nos referimos al botón del modal
+        botonImprimirModal.addEventListener('click', () => {
+            console.log("Botón Imprimir del modal clickeado");
+            // Aquí iría tu lógica de impresión específica para la etiqueta
+            // Por ejemplo, puedes abrir una ventana nueva e imprimir solo el contenido de la etiqueta:
+            const contenidoEtiqueta = document.getElementById('label-content-for-modal').innerHTML; // Asegúrate de que 'label-content-for-modal' es el ID de tu div que contiene la etiqueta en el modal
+            const ventanaImpresion = window.open('', '', 'height=600,width=800');
+            ventanaImpresion.document.write('<html><head><title>Imprimir Etiqueta</title>');
+            // **IMPORTANTE**: Asegúrate de incluir tus estilos CSS para la etiqueta aquí para que se imprima bien
+            ventanaImpresion.document.write('<link rel="stylesheet" href="{{ url_for(\'static\', filename=\'css/base.css\') }}">');
+            ventanaImpresion.document.write('<style>');
+            ventanaImpresion.document.write(`
+                /* Aquí pega los estilos relevantes de tu .label-content, .label-header, etc.
+                para que la etiqueta se vea bien al imprimirse. */
+                body { margin: 0; padding: 10mm; font-family: sans-serif; }
+                .label-preview-container { margin: 0 auto; }
+                .label-content { border: 1px solid #ccc; padding: 5mm; width: 60mm; height: 30mm; display: flex; flex-direction: column; justify-content: space-between; font-size: 8pt; box-sizing: border-box; }
+                .label-header { text-align: center; font-weight: bold; font-size: 9pt; margin-bottom: 2mm; }
+                .label-body { display: flex; justify-content: space-between; align-items: flex-start; }
+                .label-details { flex-grow: 1; margin-right: 5mm; }
+                .medicamento-nombre { font-size: 10pt; font-weight: bold; margin-bottom: 1mm; }
+                .lote-vencimiento { display: flex; justify-content: space-between; font-size: 7pt; margin-top: 1mm; }
+                .label-qr-code { text-align: center; }
+                .label-qr-code canvas { display: block; margin: 0 auto; }
+                .codigo-producto { font-size: 7pt; margin-top: 1mm; }
+                .label-footer { text-align: right; font-size: 6pt; margin-top: 2mm; }
+            `);
+            ventanaImpresion.document.write('</style>');
+            ventanaImpresion.document.write('</head><body>');
+            ventanaImpresion.document.write(contenidoEtiqueta);
+            ventanaImpresion.document.write('</body></html>');
+            ventanaImpresion.document.close();
+            ventanaImpresion.print();
+            // Puedes cerrar el modal después de imprimir si lo deseas
+            // modalVistaPreviaEtiqueta.hide();
+        });
+    }
+
+    const modalElement = document.getElementById('modalVistaPreviaEtiqueta');
+    if (modalElement) {
+        modalElement.addEventListener('hidden.bs.modal', event => {
+            // Cuando el modal se oculta, vuelve a mostrar el video de fondo
+            if (videoBackground) {
+                videoBackground.style.display = 'block';
+            }
+            // Opcional: si quieres que el formulario del generador de etiquetas se muestre de nuevo
+            // document.getElementById('generador-etiquetas-container').style.display = 'block';
         });
     }
 
