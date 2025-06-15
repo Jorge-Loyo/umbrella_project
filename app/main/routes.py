@@ -37,7 +37,9 @@ def base():
 
     db = get_db()
     lista_centros = []
+    lista_usuario = []
     try:
+        # Cargar centros
         centros_cursor = db.centros.find().sort("nombre", 1)
         for centro in centros_cursor:
             lista_centros.append({
@@ -45,11 +47,28 @@ def base():
                 "nombre": centro.get("nombre")
             })
         current_app.logger.debug(f"Centros cargados para el menú: {lista_centros}")
-    except Exception as e:
-        current_app.logger.error(f"Error al cargar centros desde MongoDB: {e}")
-        flash("Error al cargar la lista de centros.", "danger") # Necesitas importar flash de flask
 
-    return render_template('base.html', title='Menú Principal', user=current_user, centros=lista_centros)
+        # Cargar usuarios
+        usuarios_cursor = db.usuario.find().sort("nombre_usuario", 1)
+        for usuario in usuarios_cursor:
+            lista_usuario.append({
+                "id": usuario.get("_id"),
+                "nombre_usuario": usuario.get("nombre_usuario")
+            })
+        current_app.logger.debug(f"Usuarios cargados para el menú: {lista_usuario}")
+
+    except Exception as e:
+        current_app.logger.error(f"Error al cargar datos desde MongoDB: {e}")
+        flash("Error al cargar la lista de centros o usuarios.", "danger")
+
+    return render_template(
+        'base.html',
+        title='Menú Principal',
+        user=current_user,
+        centros=lista_centros,
+        usuarios=lista_usuario
+    )
+
 
 @bp.route('/buscar_medicamentos')
 @login_required

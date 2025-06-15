@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const crearUsuario = document.getElementById('crear-usuario');
     const enlaceCambiarContrasenia = document.getElementById('enlace-cambiar-contraseña');
     const crearNuevaContrasenia = document.getElementById('crear-nueva-contraseña');
+    const derechosDeUsuarios = document.getElementById('derechos-de-usuarios');
+    const enlaceDerechosDeUsuarios = document.getElementById('enlace-derechos-de-usuarios');
 
     // --- Elementos del Formulario del Generador de Etiquetas ---
     const centroSelect = document.getElementById('centro');
@@ -46,8 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const trazabilidadContainer = document.getElementById('trazabilidad-container');
     const numeroSerieInput = document.getElementById('numero-serie');
 
+
     // ---Elementos de los formularios de ingreso de Medicamentos
-    const nombreMedicamento = document.getElementById('nombreMedicamento') 
+    const nombreMedicamento = document.getElementById('nombreMedicamento')
     const codigoMedicamento = document.getElementById('codigoMedicamento')
     const laboratorioMedicamento = document.getElementById('laboratorioMedicamento')
     const monodrogaMedicamento = document.getElementById('monodrogaMedicamento')
@@ -69,10 +72,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const areaTrabajoInput = document.getElementById('areaTrabajo');
     const usuarioInput = document.getElementById('usuario');
     const contraseniaInput = document.getElementById('contraseña');
+    const rolInput = document.getElementById('rol');
+    const activoInput = document.getElementById('activo');
 
     // --- Elementos del formulario "cambiar Contraseña"
     const usuarioBlanqueoInput = document.getElementById('usuarioBlanqueo')
     const nuevaContraseniaInput = document.getElementById('nuevaContraseña')
+
+    // --- Elementos del formulario "derechos de usuarios"
+    const usuarioActivoInput = document.getElementById('usuarioActivo')
+    const activo_inactivoInput = document.getElementById('activo_inactivo')
+
 
     // --- Botones de Acción del Formulario ---
     const botonVerVistaPrevia = document.getElementById('boton-vista-previa');
@@ -91,6 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const botonIngresarUsuario = document.getElementById('boton-ingresar-usuario');
     const botonCerrarContrasenia = document.getElementById('cerrar-contraseña');
     const botonIngresarContrasenia = document.getElementById('boton-ingresar-contraseña');
+    const botonCerrarDerechos = document.getElementById('cerrar-derechos');
+    const botonIngresarDerechos = document.getElementById('boton-ingresar-derechos');
     const videoBackground = document.getElementById('video-background');
 
 
@@ -135,8 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Funcion para limpiar formularios de ingreso
-    function limpiarFormIngreso(input){
-        if (input){
+    function limpiarFormIngreso(input) {
+        if (input) {
             input.value = ''
         }
     }
@@ -145,21 +157,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // -- Funcion para limpiar formulario crear usuario
-    function limpiarFormCrearUsuario(){
+    function limpiarFormCrearUsuario() {
         limpiarFormIngreso(nombreInput);
         limpiarFormIngreso(apellidoInput);
         limpiarFormIngreso(emailInput);
         limpiarFormIngreso(areaTrabajoInput);
         limpiarFormIngreso(contraseniaInput);
         limpiarFormIngreso(usuarioInput);
+        limpiarFormIngreso(rolInput);
+        limpiarFormIngreso(activoInput);
     }
 
     // --- Funcion para limpiar el formulario cambiar contraseña
-    function limpiarFormCambiarContraseña(){
+    function limpiarFormCambiarContraseña() {
         limpiarFormIngreso(usuarioBlanqueoInput);
-        limpiarFormIngreso(nuevaContraseniaInput)
+        limpiarFormIngreso(nuevaContraseniaInput);
     }
 
+    // --- Funcion para limpiar el formulario derechos de usuarios
+    function limpiarFormDerechosDeUsuarios() {
+        limpiarFormIngreso(usuarioActivoInput);
+        limpiarFormIngreso(activo_inactivoInput);
+    }
 
     // --- Logica para mostrar formulario
     function mostrarFormulario(enlace, creador) {
@@ -195,6 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         case crearNuevaContrasenia.id:
                             limpiarFormCambiarContraseña();
                             break;
+                        case derechosDeUsuarios.id:
+                            limpiarFormDerechosDeUsuarios();
+                            break;
                         default:
                             console.warn(`No hay función de limpieza definida para el formulario con ID: ${formularioActivo.id}`);
                             break;
@@ -223,30 +245,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Llama a la función de limpieza específica del formulario que se está cerrando
                 switch (formularioActivo.id) {
-                        case enlaceGeneradorEtiquetas.id:
-                            limpiarCamposAutocompletadosYPreview();
-                            break;
-                        case crearNuevoMedicamento.id:
-                            limpiarFormIngreso(nuevoMedicamentoInput);
-                            break;
-                        case crearNuevaMonodroga.id:
-                            limpiarFormIngreso(nuevaMonodrogaInput);
-                            break;
-                        case crearNuevaCategoria.id:
-                            limpiarFormIngreso(nuevaCategoriaInput);
-                            break;
-                        case crearNuevaSubcategoria.id:
-                            limpiarFormIngreso(nuevaSubcategoriaInput);
-                            break;
-                        case crearUsuario.id:
-                            limpiarFormCrearUsuario();
-                            break;
-                        case crearNuevaContrasenia.id:
-                            limpiarFormCambiarContraseña();
-                            break;
-                        default:
-                            console.warn(`No hay función de limpieza definida para el formulario con ID: ${formularioActivo.id}`);
-                            break;
+                    case enlaceGeneradorEtiquetas.id:
+                        limpiarCamposAutocompletadosYPreview();
+                        break;
+                    case crearNuevoMedicamento.id:
+                        limpiarFormIngreso(nuevoMedicamentoInput);
+                        break;
+                    case crearNuevaMonodroga.id:
+                        limpiarFormIngreso(nuevaMonodrogaInput);
+                        break;
+                    case crearNuevaCategoria.id:
+                        limpiarFormIngreso(nuevaCategoriaInput);
+                        break;
+                    case crearNuevaSubcategoria.id:
+                        limpiarFormIngreso(nuevaSubcategoriaInput);
+                        break;
+                    case crearUsuario.id:
+                        limpiarFormCrearUsuario();
+                        break;
+                    case crearNuevaContrasenia.id:
+                        limpiarFormCambiarContraseña();
+                        break;
+                    case derechosDeUsuarios.id:
+                        limpiarFormDerechosDeUsuarios();
+                        break;
+                    default:
+                        console.warn(`No hay función de limpieza definida para el formulario con ID: ${formularioActivo.id}`);
+                        break;
                 }
                 console.log(`Formulario cerrado: ${creador.id}`);
             });
@@ -280,19 +305,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Funcion para mostrar Formularios
-    
+
 
     // Funcion para cerrar Formularios
-    function cerrarFormulario(boton, creador){
+    function cerrarFormulario(boton, creador) {
         if (boton && creador) {
             boton.addEventListener('click', () => {
-            creador.style.display = 'none';
-    });
-    }
+                creador.style.display = 'none';
+            });
+        }
     }
 
     // --- Lógica para Mostrar y cerrar el Generador de Etiquetas ---
-    mostrarFormulario(enlaceGeneradorEtiquetas,generadorEtiquetasContainer);
+    mostrarFormulario(enlaceGeneradorEtiquetas, generadorEtiquetasContainer);
     cerrarFormulario(botonCerrarEtiqueta, generadorEtiquetasContainer);
 
 
@@ -319,6 +344,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Logica para mostrar y cerrar el formulario "Blanqueo de Contraseña"
     mostrarFormulario(enlaceCambiarContrasenia, crearNuevaContrasenia);
     cerrarFormulario(botonCerrarContrasenia, crearNuevaContrasenia);
+
+    // --- Logica para mostrar y cerrar el formulario "Derechos de Usuarios"
+    mostrarFormulario(enlaceDerechosDeUsuarios, derechosDeUsuarios);
+    cerrarFormulario(botonCerrarDerechos, derechosDeUsuarios);
 
     // --- Lógica para el Botón Limpiar Formulario ---
     if (botonLimpiar) {
@@ -362,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    
+
 
     // --- Lógica Principal: Autocompletado de Medicamentos ---
     if (medicamentoInput && sugerenciasContainer) {
@@ -509,72 +538,72 @@ document.addEventListener('DOMContentLoaded', () => {
     }*/
 
     if (botonVerVistaPrevia) {
-    botonVerVistaPrevia.addEventListener('click', () => {
-        console.log("Botón 'Ver vista previa' clickeado.");
+        botonVerVistaPrevia.addEventListener('click', () => {
+            console.log("Botón 'Ver vista previa' clickeado.");
 
-        // Recopilar datos del formulario para la etiqueta
-        const nombreMedicamentoForm = medicamentoInput ? medicamentoInput.value.trim() : "N/A";
-        const codigoProductoForm = codigoInput ? codigoInput.value.trim() : "";
-        const nombreMonodrogaForm = monodrogaInput ? monodrogaInput.value.trim() : "N/A";
-        const descPresentacionForm = presentacionInput ? presentacionInput.value.trim() : "N/A";
-        const numeroLoteForm = loteInput ? loteInput.value.trim() : "";
-        const fechaVencimientoValueForm = vencimientoInput ? vencimientoInput.value : "";
-        const centroNombreForm = (centroSelect && centroSelect.selectedIndex >= 0 && centroSelect.options[centroSelect.selectedIndex].value !== "") ? centroSelect.options[centroSelect.selectedIndex].text : "N/A";
-        const nombreUsuario = document.body.dataset.username || 'N/A'; // Lee desde data-attribute
+            // Recopilar datos del formulario para la etiqueta
+            const nombreMedicamentoForm = medicamentoInput ? medicamentoInput.value.trim() : "N/A";
+            const codigoProductoForm = codigoInput ? codigoInput.value.trim() : "";
+            const nombreMonodrogaForm = monodrogaInput ? monodrogaInput.value.trim() : "N/A";
+            const descPresentacionForm = presentacionInput ? presentacionInput.value.trim() : "N/A";
+            const numeroLoteForm = loteInput ? loteInput.value.trim() : "";
+            const fechaVencimientoValueForm = vencimientoInput ? vencimientoInput.value : "";
+            const centroNombreForm = (centroSelect && centroSelect.selectedIndex >= 0 && centroSelect.options[centroSelect.selectedIndex].value !== "") ? centroSelect.options[centroSelect.selectedIndex].text : "N/A";
+            const nombreUsuario = document.body.dataset.username || 'N/A'; // Lee desde data-attribute
 
-        // Validaciones (estas ya las tenías, ¡genial!)
-        if (!codigoProductoForm) { alert("Selecciona un medicamento para obtener el código del producto."); return; }
-        if (!numeroLoteForm) { alert("Ingresa el número de lote."); loteInput.focus(); return; }
-        if (!fechaVencimientoValueForm) { alert("Selecciona la fecha de vencimiento."); vencimientoInput.focus(); return; }
+            // Validaciones (estas ya las tenías, ¡genial!)
+            if (!codigoProductoForm) { alert("Selecciona un medicamento para obtener el código del producto."); return; }
+            if (!numeroLoteForm) { alert("Ingresa el número de lote."); loteInput.focus(); return; }
+            if (!fechaVencimientoValueForm) { alert("Selecciona la fecha de vencimiento."); vencimientoInput.focus(); return; }
 
-        // Generar el string para el QR
-        const fechaVencimientoFormateadaParaQR = fechaVencimientoValueForm.replace(/-/g, '');
-        const qrCodeString = `<span class="math-inline">\{codigoProductoForm\}\|</span>{numeroLoteForm}|${fechaVencimientoFormateadaParaQR}`;
-        console.log("String para el QR:", qrCodeString);
+            // Generar el string para el QR
+            const fechaVencimientoFormateadaParaQR = fechaVencimientoValueForm.replace(/-/g, '');
+            const qrCodeString = `<span class="math-inline">\{codigoProductoForm\}\|</span>{numeroLoteForm}|${fechaVencimientoFormateadaParaQR}`;
+            console.log("String para el QR:", qrCodeString);
 
-        // --- Llenar los campos de la previsualización DENTRO DEL MODAL ---
-        // Asegúrate de que los IDs aquí (previewCentro, previewMedicamentoNombre, etc.)
-        // existan en el HTML de tu MODAL.
-        if (previewCentro) previewCentro.textContent = centroNombreForm;
-        if (previewMedicamentoNombre) previewMedicamentoNombre.textContent = nombreMedicamentoForm;
-        if (previewMonodroga) previewMonodroga.textContent = nombreMonodrogaForm;
-        if (previewPresentacion) previewPresentacion.textContent = descPresentacionForm;
-        if (previewLote) previewLote.textContent = numeroLoteForm;
-        if (previewVencimiento) previewVencimiento.textContent = fechaVencimientoValueForm;
-        if (previewCodigoProducto) previewCodigoProducto.textContent = codigoProductoForm;
-        if (previewUsuario) previewUsuario.textContent = `Prep: ${nombreUsuario}`;
+            // --- Llenar los campos de la previsualización DENTRO DEL MODAL ---
+            // Asegúrate de que los IDs aquí (previewCentro, previewMedicamentoNombre, etc.)
+            // existan en el HTML de tu MODAL.
+            if (previewCentro) previewCentro.textContent = centroNombreForm;
+            if (previewMedicamentoNombre) previewMedicamentoNombre.textContent = nombreMedicamentoForm;
+            if (previewMonodroga) previewMonodroga.textContent = nombreMonodrogaForm;
+            if (previewPresentacion) previewPresentacion.textContent = descPresentacionForm;
+            if (previewLote) previewLote.textContent = numeroLoteForm;
+            if (previewVencimiento) previewVencimiento.textContent = fechaVencimientoValueForm;
+            if (previewCodigoProducto) previewCodigoProducto.textContent = codigoProductoForm;
+            if (previewUsuario) previewUsuario.textContent = `Prep: ${nombreUsuario}`;
 
 
-        // --- Generar el QR DENTRO DEL MODAL ---
-        // Usa 'qrcodePreviewAreaModal' que es el div dentro del modal
-        if (qrcodePreviewAreaModal) {
-            qrcodePreviewAreaModal.innerHTML = ''; // Limpiar el div antes de generar
-            try {
-                new QRCode(qrcodePreviewAreaModal, { // <-- ¡Aquí usamos el nuevo ID!
-                    text: qrCodeString,
-                    width: 60, 
-                    height: 60,
-                    colorDark: "#000000", colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M
-                });
-                console.log("Código QR generado en el modal.");
+            // --- Generar el QR DENTRO DEL MODAL ---
+            // Usa 'qrcodePreviewAreaModal' que es el div dentro del modal
+            if (qrcodePreviewAreaModal) {
+                qrcodePreviewAreaModal.innerHTML = ''; // Limpiar el div antes de generar
+                try {
+                    new QRCode(qrcodePreviewAreaModal, { // <-- ¡Aquí usamos el nuevo ID!
+                        text: qrCodeString,
+                        width: 60,
+                        height: 60,
+                        colorDark: "#000000", colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                    console.log("Código QR generado en el modal.");
 
-                // Ya no necesitas manipular 'botonImprimir' (el del formulario principal)
-                // El botón de imprimir estará en el modal.
+                    // Ya no necesitas manipular 'botonImprimir' (el del formulario principal)
+                    // El botón de imprimir estará en el modal.
 
-                // --- ¡NUEVO! Muestra el Modal de Bootstrap ---
-                modalVistaPreviaEtiqueta.show(); // <-- ¡Así se muestra el modal!
+                    // --- ¡NUEVO! Muestra el Modal de Bootstrap ---
+                    modalVistaPreviaEtiqueta.show(); // <-- ¡Así se muestra el modal!
 
-            } catch (error) {
-                console.error("Error al generar el código QR en el modal:", error);
-                if (qrcodePreviewAreaModal) qrcodePreviewAreaModal.innerHTML = 'Error QR';
-                // Si tienes un botón de imprimir en el modal, podrías deshabilitarlo aquí
-                if (botonImprimirModal) botonImprimirModal.disabled = true;
-            }
+                } catch (error) {
+                    console.error("Error al generar el código QR en el modal:", error);
+                    if (qrcodePreviewAreaModal) qrcodePreviewAreaModal.innerHTML = 'Error QR';
+                    // Si tienes un botón de imprimir en el modal, podrías deshabilitarlo aquí
+                    if (botonImprimirModal) botonImprimirModal.disabled = true;
+                }
             } else {
                 console.error("Elemento '#qrcode-preview-area-modal' no encontrado al generar QR.");
             }
-    });
+        });
     }
     // ... (el resto de tu script, incluyendo el listener para botonImprimir, que ahora será el del modal) ...
 
@@ -643,7 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener("DOMContentLoaded", () => {
         const hamburguer = document.querySelector('#toggle-btn');
-        hamburguer.addEventListener("click", function(){
+        hamburguer.addEventListener("click", function () {
             document.querySelector("#sidebar").classList.toggle("expand");
         });
     });

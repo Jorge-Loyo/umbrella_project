@@ -51,7 +51,7 @@ li {
     display: flex;
 }
 
-#sidebar{
+#sidebar {
     width: 70px;
     min-width: 70px;
     z-index: 1000;
@@ -95,7 +95,7 @@ li {
     display: none;
 }
 
-.sidebar-nav{
+.sidebar-nav {
     display: flex;
     flex-direction: column;
     margin-top: 3rem;
@@ -145,7 +145,7 @@ a.sidebar-link:hover,
 }
 
 
-.item-icon i{
+.item-icon i {
     font-size: 1rem;
     color: #e62a2a;
 }
@@ -155,7 +155,7 @@ a.sidebar-link:hover,
     color: #e62a2a;
 }
 
-#sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after{
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after {
     border: solid;
     border-width: 0 .075rem .075rem 0;
     content: "";
@@ -168,7 +168,7 @@ a.sidebar-link:hover,
     transition: all .2s ease-out;
 }
 
-#sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after{
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
     transform: rotate(-45deg);
     transition: all .2s ease-out;
 }
@@ -184,7 +184,7 @@ a.sidebar-link:hover,
     transition: all 0.5s ease;
 }
 
-#sidebar:not(.expand) .sidebar-item:hover .has-dropdown+ .sidebar-dropdown {
+#sidebar:not(.expand) .sidebar-item:hover .has-dropdown+.sidebar-dropdown {
     display: block;
     max-height: 15rem;
     width: 100%;
@@ -217,41 +217,44 @@ a.sidebar-link:hover,
     object-fit: cover;
     display: block;
 }
+
 /* GENERADOR DE ETIQUETAS */
 
 .form-container {
     position: absolute;
     top: 50%;
-    left: calc(50%); /* 8rem = 16rem / 2, ajusta según ancho del sidebar */
+    left: calc(50%);
+    /* 8rem = 16rem / 2, ajusta según ancho del sidebar */
     transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0.95); /* fondo semitransparente */
+    background-color: rgba(255, 255, 255, 0.95);
+    /* fondo semitransparente */
     padding: 1rem;
     border-radius: 10px;
     max-width: 900px;
     width: 95%;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     z-index: 10;
     transition: all 0.35s ease-in-out;
 }
 
 .mb-3 {
-    position: relative; 
+    position: relative;
 }
 
 /* Estilos para el contenedor de las sugerencias */
 .sugerencias-container-estilo {
-    position: absolute; 
-    top: 100%; 
-    left: 0; 
-    width: 100%; 
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
     background-color: #fff;
-    border: 1px solid #ccc; 
-    border-radius: 0 0 5px 5px; 
+    border: 1px solid #ccc;
+    border-radius: 0 0 5px 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 100; 
-    max-height: 200px; 
-    overflow-y: auto; 
-    display: none; 
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
 }
 
 /* Estilos individuales para cada sugerencia */
@@ -262,7 +265,7 @@ a.sidebar-link:hover,
 }
 
 .sugerencia-item:last-child {
-    border-bottom: none; 
+    border-bottom: none;
 }
 
 .sugerencia-item:hover {
@@ -285,17 +288,27 @@ a.sidebar-link:hover,
 #cerrar-categoria,
 #cerrar-subcategoria,
 #cerrar-usuario,
-#cerrar-contraseña {
-    position: absolute; /* Saca el botón del flujo normal del documento */
-    top: 12px; /* Distancia desde el borde superior del contenedor */
+#cerrar-contraseña,
+#cerrar-derechos {
+    position: absolute;
+    /* Saca el botón del flujo normal del documento */
+    top: 12px;
+    /* Distancia desde el borde superior del contenedor */
     right: 12px;
-    padding: .25rem .5rem; /* Reduce el padding: arriba/abajo .25rem, izquierda/derecha .5rem */
-    font-size: .875rem; /* Reduce el tamaño de la fuente para que el botón sea más compacto */
-    line-height: 1; /* Ayuda a que el contenido interno se centre */
-    height: auto; /* Asegúrate de que no tenga una altura fija de Bootstrap que lo agrande */
-    display: flex; /* Convierte el botón en un flex container para centrar su propio icono */
-    align-items: center; /* Centra verticalmente el icono dentro del botón */
-    justify-content: center; /* Centra horizontalmente el icono dentro del botón */
+    padding: .25rem .5rem;
+    /* Reduce el padding: arriba/abajo .25rem, izquierda/derecha .5rem */
+    font-size: .875rem;
+    /* Reduce el tamaño de la fuente para que el botón sea más compacto */
+    line-height: 1;
+    /* Ayuda a que el contenido interno se centre */
+    height: auto;
+    /* Asegúrate de que no tenga una altura fija de Bootstrap que lo agrande */
+    display: flex;
+    /* Convierte el botón en un flex container para centrar su propio icono */
+    align-items: center;
+    /* Centra verticalmente el icono dentro del botón */
+    justify-content: center;
+    /* Centra horizontalmente el icono dentro del botón */
 }
 
 /* Ajusta el tamaño del icono dentro del botón si es necesario */
@@ -305,27 +318,33 @@ a.sidebar-link:hover,
 #cerrar-categoria i.fa-xmark,
 #cerrar-subcategoria i.fa-xmark,
 #cerrar-usuario i.fa-xmark,
-#cerrar-contraseña i.fa-xmark   {
-    font-size: 1rem; /* Un tamaño adecuado para el icono en un botón más pequeño */
+#cerrar-contraseña i.fa-xmark,
+#cerrar-derechos i.fa-xmark {
+    font-size: 1rem;
+    /* Un tamaño adecuado para el icono en un botón más pequeño */
 }
 
 /* Para el h2, puedes asegurarte de que no tiene un margen inferior excesivo si es la causa */
-.mb-4 { /* Esta es la clase de Bootstrap */
-    margin-bottom: 0 !important; /* Si quieres eliminar el margen inferior que Bootstrap le da al h2 */
+.mb-4 {
+    /* Esta es la clase de Bootstrap */
+    margin-bottom: 0 !important;
+    /* Si quieres eliminar el margen inferior que Bootstrap le da al h2 */
     /* O puedes usar un valor más pequeño: margin-bottom: .5rem !important; */
 }
 
 .form-container-small {
     position: absolute;
     top: 50%;
-    left: calc(50%); /* 8rem = 16rem / 2, ajusta según ancho del sidebar */
+    left: calc(50%);
+    /* 8rem = 16rem / 2, ajusta según ancho del sidebar */
     transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0.95); /* fondo semitransparente */
+    background-color: rgba(255, 255, 255, 0.95);
+    /* fondo semitransparente */
     padding: 1rem;
     border-radius: 10px;
     max-width: 500px;
     width: 95%;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     z-index: 10;
     transition: all 0.35s ease-in-out;
 }
@@ -333,9 +352,11 @@ a.sidebar-link:hover,
 .form-container-medium {
     position: absolute;
     top: 50%;
-    left: calc(50%); /* 8rem = 16rem / 2, ajusta según ancho del sidebar */
+    left: calc(50%);
+    /* 8rem = 16rem / 2, ajusta según ancho del sidebar */
     transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0.95); /* fondo semitransparente */
+    background-color: rgba(255, 255, 255, 0.95);
+    /* fondo semitransparente */
     padding: 1rem;
     border-radius: 10px;
     max-width: 700px;
@@ -352,74 +373,100 @@ a.sidebar-link:hover,
    Define el tamaño visible de la etiqueta en pantalla.
    La proporción para la pantalla será (Ancho 60 / Alto 45) = 4/3. */
 .label-preview-container {
-    width: 280px; /* Ancho deseado para la previsualización en pantalla (ej: 280px) */
-    height: 210px; /* Alto calculado para mantener la proporción (280 * 3/4 = 210) */
-    margin: 0 auto; /* Centra el contenedor dentro del modal-body */
-    padding: 0; /* Aseguramos que no haya padding extra aquí */
-    box-sizing: border-box; /* Incluye padding y borde en el width/height */
-    background-color: white; /* Fondo blanco de la etiqueta */
-    border: 1px solid #e0e0e0; /* Borde gris claro */
-    border-radius: 8px; /* Bordes redondeados para un look moderno */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    overflow: hidden; /* Para que el contenido no se salga de los bordes redondeados */
+    width: 280px;
+    /* Ancho deseado para la previsualización en pantalla (ej: 280px) */
+    height: 210px;
+    /* Alto calculado para mantener la proporción (280 * 3/4 = 210) */
+    margin: 0 auto;
+    /* Centra el contenedor dentro del modal-body */
+    padding: 0;
+    /* Aseguramos que no haya padding extra aquí */
+    box-sizing: border-box;
+    /* Incluye padding y borde en el width/height */
+    background-color: white;
+    /* Fondo blanco de la etiqueta */
+    border: 1px solid #e0e0e0;
+    /* Borde gris claro */
+    border-radius: 8px;
+    /* Bordes redondeados para un look moderno */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra suave */
+    overflow: hidden;
+    /* Para que el contenido no se salga de los bordes redondeados */
 }
 
 /* El DIV que simula la etiqueta física. Sus dimensiones ahora son 100% del contenedor padre. */
 .label-content {
-    width: 100%; /* Ocupa todo el ancho de .label-preview-container */
-    height: 100%; /* Ocupa todo el alto de .label-preview-container */
+    width: 100%;
+    /* Ocupa todo el ancho de .label-preview-container */
+    height: 100%;
+    /* Ocupa todo el alto de .label-preview-container */
 
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: #000;
     box-sizing: border-box;
 
     display: flex;
-    flex-direction: column; /* Todos los elementos principales en columna */
-    justify-content: space-between; /* Distribuye el espacio verticalmente */
-    padding: 10px 15px; /* Padding interno general de la etiqueta (arriba/abajo, izquierda/derecha) */
+    flex-direction: column;
+    /* Todos los elementos principales en columna */
+    justify-content: space-between;
+    /* Distribuye el espacio verticalmente */
+    padding: 10px 15px;
+    /* Padding interno general de la etiqueta (arriba/abajo, izquierda/derecha) */
 }
 
 /* --- Estilos para los elementos DENTRO de la etiqueta --- */
 
 .label-header {
-    text-align: left; /* Alineación del centro (HMCM) */
-    font-size: 0.7em; /* Tamaño de fuente para el centro */
+    text-align: left;
+    /* Alineación del centro (HMCM) */
+    font-size: 0.7em;
+    /* Tamaño de fuente para el centro */
     font-weight: bold;
-    margin-bottom: 5px; /* Espacio debajo del centro */
+    margin-bottom: 5px;
+    /* Espacio debajo del centro */
     flex-shrink: 0;
 }
 
 .label-main-details {
-    flex-grow: 1; /* Permite que esta sección ocupe el espacio principal */
+    flex-grow: 1;
+    /* Permite que esta sección ocupe el espacio principal */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding-bottom: 5px; /* Espacio antes del separador o sección inferior */
+    padding-bottom: 5px;
+    /* Espacio antes del separador o sección inferior */
 }
 
 p.medicamento-nombre {
-    margin: 0; /* Elimina margen predeterminado del párrafo */
+    margin: 0;
+    /* Elimina margen predeterminado del párrafo */
     padding-bottom: 2px;
 }
 
 p.medicamento-nombre strong {
-    font-size: 1em; /* Nombre de la droga grande para previsualización */
+    font-size: 1em;
+    /* Nombre de la droga grande para previsualización */
     font-weight: bold;
     text-align: left;
-    margin-bottom: 8px; /* Espacio debajo del nombre de la droga */
+    margin-bottom: 8px;
+    /* Espacio debajo del nombre de la droga */
     line-height: 1.1;
     word-wrap: break-word;
     padding-bottom: 2px;
     padding-top: 2px;
     border-top: 0.5px solid #ccc;
-    border-bottom: 0.5px solid #ccc; /* Línea divisoria */
+    border-bottom: 0.5px solid #ccc;
+    /* Línea divisoria */
     margin-bottom: 2px;
 }
 
 .label-main-details p {
-    margin: 0; /* Elimina márgenes de los párrafos en detalles */
+    margin: 0;
+    /* Elimina márgenes de los párrafos en detalles */
     line-height: 1.2;
-    font-size: 0.9em; /* Tamaño de fuente para detalles como Monodroga, Presentación */
+    font-size: 0.9em;
+    /* Tamaño de fuente para detalles como Monodroga, Presentación */
 }
 
 .label-main-details p strong {
@@ -428,11 +475,14 @@ p.medicamento-nombre strong {
 
 .lote-vencimiento {
     display: flex;
-    justify-content: space-between; /* Lote y Vencimiento separados */
+    justify-content: space-between;
+    /* Lote y Vencimiento separados */
     width: 100%;
-    margin-top: auto; /* Empuja Lote/Venc hacia abajo si hay espacio */
+    margin-top: auto;
+    /* Empuja Lote/Venc hacia abajo si hay espacio */
     padding-top: 5px;
-    border-top: 0.5px solid #ccc; /* Línea divisoria */
+    border-top: 0.5px solid #ccc;
+    /* Línea divisoria */
     line-height: 1.2;
 }
 
@@ -443,34 +493,45 @@ p.medicamento-nombre strong {
 
 .label-bottom-section {
     display: flex;
-    align-items: center; /* Alinea QR e íconos en el centro verticalmente */
-    justify-content: space-between; /* Distribuye espacio entre QR e íconos */
-    margin-top: 10px; /* Espacio entre detalles y sección inferior */
-    flex-shrink: 0; /* Evita que se encoja */
+    align-items: center;
+    /* Alinea QR e íconos en el centro verticalmente */
+    justify-content: space-between;
+    /* Distribuye espacio entre QR e íconos */
+    margin-top: 10px;
+    /* Espacio entre detalles y sección inferior */
+    flex-shrink: 0;
+    /* Evita que se encoja */
 }
 
 .label-qr-code-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra el QR y texto debajo */
-    flex-shrink: 0; /* Evita que el QR se encoja */
-    margin-right: 15px; /* Espacio a la derecha del QR */
+    align-items: center;
+    /* Centra el QR y texto debajo */
+    flex-shrink: 0;
+    /* Evita que el QR se encoja */
+    margin-right: 15px;
+    /* Espacio a la derecha del QR */
 }
 
 /* Estilos para el CONTENEDOR del QR dentro del modal */
 #qrcode-preview-area {
-    width: 80px;  /* Tamaño deseado del QR en la previsualización */
-    height: 80px; /* Debe ser igual al ancho para un QR cuadrado */
+    width: 80px;
+    /* Tamaño deseado del QR en la previsualización */
+    height: 80px;
+    /* Debe ser igual al ancho para un QR cuadrado */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 2px; /* Espacio entre QR y Cod: */
+    margin-bottom: 2px;
+    /* Espacio entre QR y Cod: */
 }
 
 /* Estilos para el CANVAS o IMG que qrcode.js genera DENTRO de #qrcode-preview-area */
 #qrcode-preview-area canvas,
 #qrcode-preview-area img {
-    width: 100% !important; /* El canvas ocupa el 100% de #qrcode-preview-area */
+    width: 100% !important;
+    /* El canvas ocupa el 100% de #qrcode-preview-area */
     height: 100% !important;
     object-fit: contain;
 }
@@ -485,15 +546,20 @@ p.medicamento-nombre strong {
 
 .label-icons-container {
     display: flex;
-    align-items: flex-end; /* Alinea los íconos a la parte inferior de su contenedor */
-    gap: 8px; /* Espacio entre los íconos */
-    flex-grow: 1; /* Permite que los íconos ocupen el espacio restante */
-    justify-content: flex-start; /* Alinea los íconos a la derecha */
+    align-items: flex-end;
+    /* Alinea los íconos a la parte inferior de su contenedor */
+    gap: 8px;
+    /* Espacio entre los íconos */
+    flex-grow: 1;
+    /* Permite que los íconos ocupen el espacio restante */
+    justify-content: flex-start;
+    /* Alinea los íconos a la derecha */
     padding-left: 9px;
 }
 
 .label-icon {
-    width: 30px; /* Tamaño de los íconos en previsualización */
+    width: 30px;
+    /* Tamaño de los íconos en previsualización */
     height: 30px;
     object-fit: contain;
 }
@@ -501,22 +567,26 @@ p.medicamento-nombre strong {
 .label-icon-text {
     font-weight: bold;
     font-size: 0.8em;
-    white-space: nowrap; /* Evita que el texto +1h se rompa */
+    white-space: nowrap;
+    /* Evita que el texto +1h se rompa */
 }
 
 .label-footer {
     text-align: right;
-    font-size: 0.75em; /* Tamaño para el usuario (Prep: N/A) */
+    font-size: 0.75em;
+    /* Tamaño para el usuario (Prep: N/A) */
     font-style: italic;
     padding-top: 3px;
     border-top: 0.5px solid #ccc;
-    margin-top: 5px; /* Espacio entre la sección inferior y el footer */
+    margin-top: 5px;
+    /* Espacio entre la sección inferior y el footer */
     flex-shrink: 0;
 }
 
 
 /* --- ESTILOS PARA IMPRESIÓN (MEDIDAS REALES 60mm x 45mm) --- */
 @media print {
+
     /* Ocultar todo lo que no sea la etiqueta */
     body * {
         visibility: hidden;
@@ -532,30 +602,39 @@ p.medicamento-nombre strong {
 
     .label-preview-container {
         /* Dimensiones exactas de la etiqueta física para impresión */
-        width: 60mm; /* ¡Ancho de 60mm! */
-        height: 45mm; /* ¡Alto de 45mm! */
+        width: 60mm;
+        /* ¡Ancho de 60mm! */
+        height: 45mm;
+        /* ¡Alto de 45mm! */
         position: absolute;
         left: 0;
         top: 0;
-        margin: 0; /* Asegura que no haya márgenes en la impresión */
-        box-shadow: none; /* Sin sombra en impresión */
-        border: 1px solid black; /* Borde de la etiqueta impresa (opcional) */
-        border-radius: 0; /* Sin bordes redondeados en impresión si no es parte de la etiqueta física */
+        margin: 0;
+        /* Asegura que no haya márgenes en la impresión */
+        box-shadow: none;
+        /* Sin sombra en impresión */
+        border: 1px solid black;
+        /* Borde de la etiqueta impresa (opcional) */
+        border-radius: 0;
+        /* Sin bordes redondeados en impresión si no es parte de la etiqueta física */
     }
 
     .label-content {
         /* Adapta el contenido a las dimensiones de impresión */
         width: 100%;
         height: 100%;
-        font-size: 7.5pt; /* Tamaño de fuente base para impresión */
-        padding: 2mm 3mm; /* Padding reducido para impresión (vertical, horizontal) */
+        font-size: 7.5pt;
+        /* Tamaño de fuente base para impresión */
+        padding: 2mm 3mm;
+        /* Padding reducido para impresión (vertical, horizontal) */
         border: none;
         box-shadow: none;
     }
 
     /* Reajustar tamaños de fuente y espaciado para impresión */
     .label-header {
-        font-size: 6.5pt; /* Tamaño para el centro en impresión */
+        font-size: 6.5pt;
+        /* Tamaño para el centro en impresión */
         margin-bottom: 1mm;
         padding-bottom: 0.2mm;
     }
@@ -565,47 +644,64 @@ p.medicamento-nombre strong {
     }
 
     p.medicamento-nombre strong {
-        font-size: 12pt; /* Tamaño de fuente para el nombre del medicamento en impresión */
+        font-size: 12pt;
+        /* Tamaño de fuente para el nombre del medicamento en impresión */
         line-height: 1.05;
-        margin-bottom: 1.5mm; /* Espacio debajo del nombre de la droga */
+        margin-bottom: 1.5mm;
+        /* Espacio debajo del nombre de la droga */
     }
 
     .label-main-details p {
-        font-size: 7pt; /* Tamaño para detalles como Monodroga, Presentación */
+        font-size: 7pt;
+        /* Tamaño para detalles como Monodroga, Presentación */
         line-height: 1.1;
     }
 
     .lote-vencimiento {
-        margin-top: 1mm; /* Ajustar margen para impresión */
+        margin-top: 1mm;
+        /* Ajustar margen para impresión */
         padding-top: 1mm;
     }
-    .lote-vencimiento p { font-size: 7pt; }
+
+    .lote-vencimiento p {
+        font-size: 7pt;
+    }
 
     .label-bottom-section {
-        margin-top: 3mm; /* Espacio entre detalles y sección inferior */
-        justify-content: space-around; /* Distribuir espacio en impresión */
+        margin-top: 3mm;
+        /* Espacio entre detalles y sección inferior */
+        justify-content: space-around;
+        /* Distribuir espacio en impresión */
     }
 
     .label-qr-code-wrapper {
-        margin-right: 0; /* No margen a la derecha en impresión si se distribuye */
+        margin-right: 0;
+        /* No margen a la derecha en impresión si se distribuye */
     }
 
     #qrcode-preview-area {
-        width: 16mm; /* Tamaño deseado del QR impreso */
+        width: 16mm;
+        /* Tamaño deseado del QR impreso */
         height: 16mm;
         margin-bottom: 0.5mm;
     }
 
-    .codigo-producto { font-size: 6pt; margin-top: 0; }
+    .codigo-producto {
+        font-size: 6pt;
+        margin-top: 0;
+    }
 
     .label-icons-container {
-        gap: 3mm; /* Espacio entre los íconos en impresión */
+        gap: 3mm;
+        /* Espacio entre los íconos en impresión */
         font-size: 6.5pt;
-        justify-content: center; /* Centrar los íconos si el espacio lo permite */
+        justify-content: center;
+        /* Centrar los íconos si el espacio lo permite */
     }
 
     .label-icon {
-        width: 6mm; /* Tamaño de los íconos impresos */
+        width: 6mm;
+        /* Tamaño de los íconos impresos */
         height: 6mm;
     }
 
@@ -617,9 +713,13 @@ p.medicamento-nombre strong {
 
     /* Ocultar elementos de la estructura anterior que ya no se usan directamente */
     .label-body {
-        display: none !important; /* Oculta el viejo label-body */
+        display: none !important;
+        /* Oculta el viejo label-body */
     }
-    .label-details, .label-qr-code {
-        display: none !important; /* Asegura que los hijos del viejo label-body no se muestren */
+
+    .label-details,
+    .label-qr-code {
+        display: none !important;
+        /* Asegura que los hijos del viejo label-body no se muestren */
     }
 }

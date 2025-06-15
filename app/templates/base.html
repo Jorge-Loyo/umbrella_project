@@ -89,7 +89,7 @@
                             <a href="#" class="item-icon" id="enlace-cambiar-contraseña">Cambiar Contraseña</a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="#" class="item-icon">Derechos de Usuarios</a>
+                            <a href="#" class="item-icon" id="enlace-derechos-de-usuarios">Derechos de Usuarios</a>
                         </li>
                     </ul>
                 </li>
@@ -119,8 +119,8 @@
                         <select id="centro" name="centro" class="form-select">
                             <option value="">Selecciona un Centro...</option>
                             {% if centros %}
-                            {% for centro_item in centros %}
-                            <option value="{{ centro_item.id }}">{{ centro_item.nombre }}</option>
+                            {% for centro in centros %}
+                            <option value="{{ centro.id }}">{{ centro.nombre }}</option>
                             {% endfor %}
                             {% else %}
                             <option value="" disabled>No hay centros disponibles</option>
@@ -363,6 +363,17 @@
                                 required>
                         </div>
                     </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="rol" class="form-label">Rol:</label>
+                            <input type="text" id="rol" name="rol" class="form-control" autocomplete="off" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="activo" class="form-label">Activo/Inactivo:</label>
+                            <input type="text" id="activo" name="activo" class="form-control" autocomplete="off"
+                                required>
+                        </div>
+                    </div>
                     <div class="mt-4">
                         <button type="button" id="boton-ingresar-usuario" class="btn btn-primary me-2">Ingresar</button>
                     </div>
@@ -379,9 +390,18 @@
                 <form>
                     <div class="mb-3">
                         <label for="usuarioBlanqueo" class="form-label">Usuario:</label>
-                        <input type="text" id="usuarioBlanqueo" name="usuarioBlanqueo" class="form-control"
-                            autocomplete="off" required>
+                        <select id="usuarioBlanqueo" name="usuarioBlanqueo" class="form-select">
+                            <option value="">Selecciona un Usuario...</option>
+                            {% if usuarios %}
+                            {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}">{{ usuario.nombre_usuario }}</option>
+                            {% endfor %}
+                            {% else %}
+                            <option value="" disabled>No hay usuarios disponibles</option>
+                            {% endif %}
+                        </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="nuevaContraseña" class="form-label">Nueva Contraseña:</label>
                         <input type="text" id="nuevaContraseña" name="nuevaContraseña" class="form-control"
@@ -390,6 +410,42 @@
                     <div class="mt-4">
                         <button type="button" id="boton-ingresar-contraseña"
                             class="btn btn-primary me-2">Cambiar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="form-container-small" style="display: none;" id="derechos-de-usuarios">
+                <button type="button" class="btn btn-primary" id="cerrar-derechos" aria-label="Cerrar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="titulo-container">
+                    <h2 class="mb-4">Estado</h2>
+                </div>
+                <form>
+                    <div class="mb-3">
+                        <label for="usuarioActivo" class="form-label">Usuario:</label>
+                        <select id="usuarioActivo" name="usuarioActivo" class="form-select">
+                            <option value="">Selecciona un Usuario...</option>
+                            {% if usuarios %}
+                            {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}">{{ usuario.nombre_usuario }}</option>
+                            {% endfor %}
+                            {% else %}
+                            <option value="" disabled>No hay usuarios disponibles</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="activo_inactivo" class="form-label">Estado:</label>
+                        <select id="activo_inactivo" name="activo_inactivo" class="form-select" required>
+                            <option value="">Selecciona una opción...</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <button type="button" id="boton-ingresar-derechos" class="btn btn-primary me-2">Cambiar</button>
                     </div>
                 </form>
             </div>
