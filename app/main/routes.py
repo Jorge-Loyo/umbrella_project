@@ -70,6 +70,7 @@ def base():
         usuarios=lista_usuario
     )
 @bp.route('/editar_activo', methods=['POST'])
+@login_required
 def editar_activo_route():
     """
     Actualiza la actividad/inactividad de cualquier usuario.
@@ -98,6 +99,7 @@ def editar_activo_route():
 
 
 @bp.route('/crear_usuario', methods=['POST'])
+@login_required
 def crear_usuario_route():
     """
     Inserta un nuevo usuario o actualiza uno existente en la base de datos según el campo 'nombre_usuario'.
@@ -147,16 +149,27 @@ def crear_usuario_route():
 
 
 @bp.route('/editar_pass', methods=['POST'])
+@login_required
 def editar_pass_route():
-    usuario_id = request.form['usuarioBlanqueo']  # Asegúrate que tu formulario envía este campo
-    nueva_contraseña = request.form['nuevaContraseña']  # Y este campo también
+    """
+    Actualiza la contraseña de un usuario específico.
+
+    Args:
+        usuario_id (str): ID del usuario cuyo contraseña se va a actualizar.
+        nueva_contraseña (str): Nueva contraseña a establecer para el usuario.
+
+    Returns: 
+        Redirige a la página principal con un mensaje de éxito o error.
+    """
+    usuario_id = request.form['usuarioBlanqueo']  
+    nueva_contrasena = request.form['nuevaContraseña']  
 
     db = get_db()
     coleccion = db['usuario']
 
     resultado = coleccion.update_one(
         {'_id': ObjectId(usuario_id)},
-        {'$set': {'contraseña': nueva_contraseña}}
+        {'$set': {'contraseña': nueva_contrasena}}
     )
 
     if resultado.modified_count > 0:
