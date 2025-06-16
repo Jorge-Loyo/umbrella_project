@@ -1,7 +1,8 @@
-from flask import render_template, current_app, url_for, request, jsonify, flash # Asegúrate de tener flash aquí si lo usas en esta ruta (lo usabas en /menu)
+from flask import app, redirect, render_template, current_app, url_for, request, jsonify, flash # Asegúrate de tener flash aquí si lo usas en esta ruta (lo usabas en /menu)
 from app.main import bp
 from flask_login import login_required, current_user
 from app import get_db # Importa la función para obtener la instancia de la BD
+from bson import ObjectId
 
 @bp.route('/')
 @bp.route('/index')
@@ -68,6 +69,103 @@ def base():
         centros=lista_centros,
         usuarios=lista_usuario
     )
+@bp.route('/editar_activo', methods=['POST'])
+def editar_activo_route():
+    """
+    Actualiza la actividad/inactividad de cualquier usuario.
+
+    Args:
+        filtro (dict): Filtro para encontrar el usuario a actualizar.
+        activo_inactivo (dict): Diccionario con el estado activo/inactivo a establecer.
+    Returns:
+        Redirige a la página principal con un mensaje de éxito o error.
+    """ 
+    usuario_id = request.form['usuarioActivo']
+    estado = request.form['activo_inactivo'] == 'Activo'
+    db = get_db()
+    coleccion = db['usuario']
+    resultado = coleccion.update_one(
+        {'_id': ObjectId(usuario_id)},
+        {'$set': {'activo': estado}}
+    )
+    if resultado.modified_count > 0:
+        flash('Usuario actualizado correctamente.', 'success')
+    else:
+        flash('No se encontró ningún usuario con ese ID o el estado ya estaba actualizado.', 'danger')
+    return redirect(url_for('main.base'))
+
+
+
+
+@bp.route('/crear_usuario', methods=['POST'])
+def crear_usuario_route():
+    """
+    Inserta un nuevo usuario o actualiza uno existente en la base de datos según el campo 'nombre_usuario'.
+
+    Args:
+        datos (dict): Diccionario con los datos obligatorios del usuario.
+
+    Returns: 
+        Redirige a la página principal con un mensaje de éxito o error.
+    """
+    estado = request.form['activo'] == 'Activo'
+    datos = {
+        'nombre': request.form['nombre'],
+        'apellido': request.form['apellido'],
+        'lugar_de_trabajo': request.form['lugar_de_trabajo'],
+        'mail': request.form['mail'],
+        'contraseña': request.form['contraseña'],
+        'nombre_usuario': request.form['nombre_usuario'],
+        'rol': request.form['rol'],
+        'activo': estado
+    }
+    campos_obligatorios = ['nombre', 'apellido', 'lugar_de_trabajo', 'mail', 'contraseña', 'nombre_usuario', 'rol', 'activo']
+    for campo in campos_obligatorios:
+        if campo not in datos or datos[campo] in [None, '', []]:
+            flash(f"El campo '{campo}' es obligatorio.", 'danger')
+            return redirect(url_for('main.base'))
+    db = get_db()
+    coleccion = db['usuario']
+
+    usuario_existente = coleccion.find_one({'nombre_usuario': datos['nombre_usuario']})
+
+    if usuario_existente:
+        resultado = coleccion.update_one(
+            {'nombre_usuario': datos['nombre_usuario']},
+            {'$set': datos}
+        )
+        if resultado.modified_count > 0:
+            flash('El usuario ya existía, datos actualizados correctamente.', 'success')
+        else:
+            flash('El usuario ya existía, pero no hubo cambios en los datos.', 'info')
+    else:
+        resultado = coleccion.insert_one(datos)
+        flash('Usuario creado exitosamente.', 'success')
+
+    return redirect(url_for('main.base'))
+
+
+
+@bp.route('/editar_pass', methods=['POST'])
+def editar_pass_route():
+    usuario_id = request.form['usuarioBlanqueo']  # Asegúrate que tu formulario envía este campo
+    nueva_contraseña = request.form['nuevaContraseña']  # Y este campo también
+
+    db = get_db()
+    coleccion = db['usuario']
+
+    resultado = coleccion.update_one(
+        {'_id': ObjectId(usuario_id)},
+        {'$set': {'contraseña': nueva_contraseña}}
+    )
+
+    if resultado.modified_count > 0:
+        flash("Contraseña actualizada correctamente.", "success")
+    else:
+        flash("La contraseña no pudo ser actualizada.", "danger")
+
+    return redirect(url_for('main.base')) 
+
 
 
 @bp.route('/buscar_medicamentos')
@@ -122,3 +220,5 @@ def buscar_medicamentos():
             return jsonify({"error": "Error interno al buscar medicamentos"}), 500
     
     return jsonify(medicamentos_encontrados)
+
+
