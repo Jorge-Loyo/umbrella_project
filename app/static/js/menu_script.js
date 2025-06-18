@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const crearUsuario = document.getElementById('crear-usuario');
     const enlaceCambiarContrasenia = document.getElementById('enlace-cambiar-contraseña');
     const crearNuevaContrasenia = document.getElementById('crear-nueva-contraseña');
-
+    const enlaceCrearLaboratorio = document.getElementById('enlace-crear-laboratorio');
+    const crearNuevoLaboratorio = document.getElementById('crear-laboratorio');
     // --- Elementos del Formulario del Generador de Etiquetas ---
     const centroSelect = document.getElementById('centro');
     const medicamentoInput = document.getElementById('medicamento');
@@ -55,10 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const presentacionMonodroga = document.getElementById('presentacionMonodroga')
     const categoriaMedicamento = document.getElementById('categoriaMedicamento')
     const subcategoriaMedicamento = document.getElementById('subcategoriaMedicamento')
-
+ 
     const nuevoMedicamentoInput = document.getElementById('medicamentoForm')
-    const nuevaMonodrogaInput = document.getElementById('monogrodaForm')
-    const nuevaMonodrodaInputDos = document.getElementById('monogrodaFormCod')
+    const nuevaMonodrogaInput = document.getElementById('monodrogaForm')
+    const nuevaMonodrodaInputDos = document.getElementById('monodrogaFormCod')
     const nuevaCategoriaInput = document.getElementById('categoriaForm')
     const nuevaSubcategoriaInput = document.getElementById('subcategoriaForm')
 
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const botonCerrarContrasenia = document.getElementById('cerrar-contraseña');
     const botonIngresarContrasenia = document.getElementById('boton-ingresar-contraseña');
     const videoBackground = document.getElementById('video-background');
-
+    const botonCerrarLaboratorio = document.getElementById('cerrar-laboratorio');
 
     // --- Elementos de la Sección de Previsualización ---
     const vistaPreviaSeccion = document.getElementById('vista-previa-etiqueta-seccion');
@@ -311,6 +312,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Logica para mostrar y cerrar el formulario "Ingresar Subcategoria"
     mostrarFormulario(enlaceCrearSubcategoria, crearNuevaSubcategoria);
     cerrarFormulario(botonCerrarSubcategoria, crearNuevaSubcategoria);
+    // --- Logica para mostrar y cerrar el formulario "Ingresar Laboratorio"
+    mostrarFormulario(enlaceCrearLaboratorio, crearNuevoLaboratorio);
+    cerrarFormulario(botonCerrarLaboratorio, crearNuevoLaboratorio);
 
     // --- Logica para mostrar y cerrar el formulario "Crear nuevo Usuario"
     mostrarFormulario(enlaceCrearUsuario, crearUsuario);
@@ -443,71 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Lógica para el Botón 'Ver vista previa' y Generación de QR ---
-    /*if (botonVerVistaPrevia) {
-        botonVerVistaPrevia.addEventListener('click', () => {
-            console.log("Botón 'Ver vista previa' clickeado.");
-
-            // Recopilar datos del formulario para la etiqueta
-            const nombreMedicamentoForm = medicamentoInput ? medicamentoInput.value.trim() : "N/A";
-            const codigoProductoForm = codigoInput ? codigoInput.value.trim() : "";
-            const nombreMonodrogaForm = monodrogaInput ? monodrogaInput.value.trim() : "N/A";
-            const descPresentacionForm = presentacionInput ? presentacionInput.value.trim() : "N/A";
-            const numeroLoteForm = loteInput ? loteInput.value.trim() : "";
-            const fechaVencimientoValueForm = vencimientoInput ? vencimientoInput.value : "";
-            const centroNombreForm = (centroSelect && centroSelect.selectedIndex >= 0 && centroSelect.options[centroSelect.selectedIndex].value !== "") ? centroSelect.options[centroSelect.selectedIndex].text : "N/A";
-            const nombreUsuario = document.body.dataset.username || 'N/A'; // Lee desde data-attribute
-
-            // Validaciones
-            if (!codigoProductoForm) { alert("Selecciona un medicamento para obtener el código del producto."); return; }
-            if (!numeroLoteForm) { alert("Ingresa el número de lote."); loteInput.focus(); return; }
-            if (!fechaVencimientoValueForm) { alert("Selecciona la fecha de vencimiento."); vencimientoInput.focus(); return; }
-
-            // (La validación de fecha de un mes ya se hace en el 'change' del input, pero podemos repetirla aquí por seguridad)
-            // ...
-
-            // Generar el string para el QR
-            const fechaVencimientoFormateadaParaQR = fechaVencimientoValueForm.replace(/-/g, '');
-            const qrCodeString = `${codigoProductoForm}|${numeroLoteForm}|${fechaVencimientoFormateadaParaQR}`;
-            console.log("String para el QR:", qrCodeString);
-
-            // Generar el QR y mostrar la previsualización
-            if (qrcodePreviewArea) {
-                qrcodePreviewArea.innerHTML = '';
-                try {
-                    new QRCode(qrcodePreviewArea, {
-                        text: qrCodeString,
-                        width: 55, height: 55,
-                        colorDark: "#000000", colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.M
-                    });
-                    console.log("Código QR generado.");
-
-                    // Llenar los campos de la previsualización
-                    if (previewCentro) previewCentro.textContent = centroNombreForm;
-                    if (previewMedicamentoNombre) previewMedicamentoNombre.textContent = nombreMedicamentoForm;
-                    if (previewMonodroga) previewMonodroga.textContent = nombreMonodrogaForm;
-                    if (previewPresentacion) previewPresentacion.textContent = descPresentacionForm;
-                    if (previewLote) previewLote.textContent = numeroLoteForm;
-                    if (previewVencimiento) previewVencimiento.textContent = fechaVencimientoValueForm;
-                    if (previewCodigoProducto) previewCodigoProducto.textContent = codigoProductoForm;
-                    if (previewUsuario) previewUsuario.textContent = `Prep: ${nombreUsuario}`;
-
-                    // Habilitar el botón de imprimir y mostrar la previsualización
-                    if (botonImprimir) botonImprimir.disabled = false;
-                    if (vistaPreviaSeccion) vistaPreviaSeccion.style.display = 'flex';
-
-                } catch (error) {
-                    console.error("Error al generar el código QR:", error);
-                    if (qrcodePreviewArea) qrcodePreviewArea.innerHTML = 'Error QR';
-                    if (botonImprimir) botonImprimir.disabled = true;
-                }
-            } else {
-                console.error("Elemento '#qrcode-preview-area' no encontrado al generar QR.");
-            }
-        });
-    }*/
-
+    
     if (botonVerVistaPrevia) {
     botonVerVistaPrevia.addEventListener('click', () => {
         console.log("Botón 'Ver vista previa' clickeado.");
@@ -648,4 +588,252 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+
+
+// --- CRUD para Subcategoría ---
+document.getElementById("boton-ingresar-subcategoria").addEventListener("click", async () => {
+    const nombreSubcat = document.getElementById("subcategoriaForm").value.trim();
+    if (!nombreSubcat) {
+        alert("Debes ingresar un nombre para la subcategoría.");
+        return;
+    }
+    try {
+        const response = await fetch("/guardar_subcategoria", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ subcategoriaForm: nombreSubcat })
+        });
+        const result = await response.json();
+        if (response.ok) {
+            alert("Subcategoría guardada correctamente");
+            console.log(result);
+        } else {
+            alert(result.mensaje || "Error al guardar");
+        }
+    } catch (error) {
+        console.error("Error al enviar la solicitud:", error);
+        alert("Error inesperado");
+    }
+});
+
+// --- CRUD para Categoría ---
+document.getElementById("boton-ingresar-categoria").addEventListener("click", async () => {
+    const nombreCategoria = document.getElementById("categoriaForm").value.trim();
+    if (!nombreCategoria) {
+        alert("Debes ingresar un nombre para la categoría.");
+        return;
+    }
+    try {
+        const response = await fetch("/guardar_categoria", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ categoriaForm: nombreCategoria })
+        });
+        const result = await response.json();
+        if (response.ok) {
+            alert("Categoría guardada correctamente.");
+            console.log(result);
+        } else {
+            alert(result.mensaje || "Error al guardar categoría.");
+        }
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+        alert("Error inesperado.");
+    }
+});
+
+// --- CRUD para Monodroga ---
+document.getElementById("boton-ingresar-monodroga").addEventListener("click", async () => {
+    const nombre = document.getElementById("monodrogaForm").value.trim();
+    const codigo = document.getElementById("monodrogaFormCod").value.trim();
+    if (!nombre || !codigo) {
+        alert("Debes ingresar nombre y código para la monodroga.");
+        return;
+    }
+    try {
+        const response = await fetch("/guardar_monodroga", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nombreMonodroga: nombre,
+                codigoMonodroga: codigo
+            })
+        });
+        const resultado = await response.json();
+        alert(resultado.mensaje);
+    } catch (error) {
+        console.error("Error al guardar monodroga:", error);
+        alert("Error inesperado");
+    }
+});
+
+// --- CRUD para Laboratorio ---
+document.getElementById("boton-ingresar-laboratorio").addEventListener("click", async () => {
+    const nombre = document.getElementById("laboratorioForm").value.trim();
+    if (!nombre) {
+        alert("El campo nombre es obligatorio.");
+        return;
+    }
+    try {
+        const response = await fetch("/guardar_laboratorio", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nombreLaboratorio: nombre })
+        });
+        const resultado = await response.json();
+        alert(resultado.mensaje);
+        if (response.ok && resultado.status === "ok") {
+            document.getElementById("laboratorioForm").value = "";
+        }
+    } catch (error) {
+        console.error("Error al guardar laboratorio:", error);
+        alert("Error inesperado");
+    }
+});
+
+
+
+function poblarSelect(url, selectId, valueKey, textKey, callback) {
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            select.innerHTML = '<option value="">Seleccione...</option>';
+            data.forEach(item => {
+                select.innerHTML += `<option value="${item[valueKey]}">${item[textKey]}</option>`;
+            });
+            if (callback) callback(); // Llama al callback después de poblar el select
+        })
+        .catch(error => console.error(`Error al obtener datos para ${selectId}:`, error));
+}
+
+function asignarListenerMonodroga() {
+    const selectMonodroga = document.getElementById('monodrogaMedicamento');
+    const inputCodigo = document.getElementById('monodCodigoMedicamento');
+    if (selectMonodroga && inputCodigo) {
+        selectMonodroga.addEventListener('change', function() {
+            inputCodigo.value = selectMonodroga.value || '';
+            console.log("ID seleccionado:", selectMonodroga.value, "Nombre mostrado:", selectMonodroga.options[selectMonodroga.selectedIndex].text);
+        });
+    }
+}
+
+// Llama a esta función cada vez que muestres el formulario de medicamento
+function poblarCombosMedicamento() {
+    poblarSelect('/api/monodrogas', 'monodrogaMedicamento', 'id_monodroga_original', 'nombre', asignarListenerMonodroga);
+    poblarSelect('/api/categorias', 'categoriaMedicamento', 'id_categoria_original', 'nombre');
+    poblarSelect('/api/subcategorias', 'subcategoriaMedicamento', 'id_subcategoria_original', 'nombre');
+    poblarSelect('/api/laboratorios', 'laboratorioMedicamento', 'id_laboratorio_original', 'nombre');
+}
+
+// Cuando se abre el formulario de medicamento
+document.getElementById('enlace-crear-medicamento')?.addEventListener('click', poblarCombosMedicamento);
+
+// Si el formulario puede mostrarse de otra forma, llama a poblarCombosMedicamento() en ese momento.
+
+document.addEventListener('DOMContentLoaded', function() {
+    const selectMonodroga = document.getElementById('monodrogaMedicamento');
+    const inputCodigo = document.getElementById('monodCodigoMedicamento');
+    if (selectMonodroga && inputCodigo) {
+        selectMonodroga.addEventListener('change', function() {
+            inputCodigo.value = selectMonodroga.value || '';
+        });
+    }
+});
+
+function asignarListenerMonodroga() {
+    const selectMonodroga = document.getElementById('monodrogaMedicamento');
+    const inputCodigo = document.getElementById('monodCodigoMedicamento');
+    if (selectMonodroga && inputCodigo) {
+        selectMonodroga.addEventListener('change', function() {
+            inputCodigo.value = selectMonodroga.value || '';
+            console.log("ID seleccionado:", selectMonodroga.value, "Nombre mostrado:", selectMonodroga.options[selectMonodroga.selectedIndex].text);
+        });
+    }
+}
+
+
+// --- FUNCIÓN UNIFICADA PARA ENVIAR EL FORMULARIO DE MEDICAMENTO ---
+async function enviarMedicamento(e) {
+    if (e) e.preventDefault();
+
+    // Obtención de valores de los campos
+    const nombre = document.getElementById("nombreMedicamento").value.trim();
+    const codigo = document.getElementById("codigoMedicamento").value.trim();
+
+    // Laboratorio
+    const selectLaboratorio = document.getElementById("laboratorioMedicamento");
+    const laboratorioId = selectLaboratorio.value.trim();
+    const laboratorioNombre = selectLaboratorio.options[selectLaboratorio.selectedIndex].text.trim();
+
+    // Monodroga
+    const selectMonodroga = document.getElementById("monodrogaMedicamento");
+    const monodrogaCodigo = selectMonodroga.value.trim();
+    const monodrogaNombre = selectMonodroga.options[selectMonodroga.selectedIndex].text.trim();
+
+    // Categoría
+    const selectCategoria = document.getElementById("categoriaMedicamento");
+    const categoriaId = selectCategoria.value.trim();
+    const categoriaNombre = selectCategoria.options[selectCategoria.selectedIndex].text.trim();
+
+    // Subcategoría
+    const selectSubcategoria = document.getElementById("subcategoriaMedicamento");
+    const subcategoriaId = selectSubcategoria.value.trim();
+    const subcategoriaNombre = selectSubcategoria.options[selectSubcategoria.selectedIndex].text.trim();
+
+    const presentacion = document.getElementById("presentacionMonodroga").value.trim();
+    const trazable = document.getElementById("trazableMedicamento").checked;
+
+    // Validación básica
+    if (
+        !nombre || !codigo || !laboratorioId || !laboratorioNombre ||
+        !monodrogaCodigo || !monodrogaNombre || !presentacion ||
+        !categoriaId || !categoriaNombre || !subcategoriaId || !subcategoriaNombre
+    ) {
+        alert("Todos los campos son obligatorios.");
+        return;
+    }
+
+    // Construcción del payload
+    const payload = {
+        nombreMedicamento: nombre,
+        codigoMedicamento: codigo,
+        laboratorioMedicamento: laboratorioNombre,
+        monodrogaMedicamento: monodrogaNombre,
+        monodCodigoMedicamento: monodrogaCodigo,
+        presentacionMonodroga: presentacion,
+        categoriaMedicamento: categoriaNombre,
+        idCategoria: categoriaId,
+        subcategoriaMedicamento: subcategoriaNombre,
+        idSubcategoria: subcategoriaId,
+        trazable: trazable
+    };
+
+    try {
+        const response = await fetch("/guardar_medicamento", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const resultado = await response.json();
+        alert(resultado.mensaje);
+        if (response.ok && resultado.status === "ok") {
+            document.getElementById("formMedicamento").reset();
+        }
+    } catch (error) {
+        console.error("Error al guardar medicamento:", error);
+        alert("Error inesperado");
+    }
+}
+
+// --- ASIGNAR LA FUNCIÓN UNIFICADA AL BOTÓN Y AL FORMULARIO ---
+if (botonIngresarMedicamento) {
+    botonIngresarMedicamento.addEventListener("click", enviarMedicamento);
+}
+
+const formMedicamento = document.getElementById("formMedicamento");
+if (formMedicamento) {
+    formMedicamento.addEventListener("submit", enviarMedicamento);
+}
 });

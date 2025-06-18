@@ -27,7 +27,7 @@ def create_app(config_class=Config):
     else:
         app.logger.info(f"SECRET_KEY cargada correctamente.")
         # app.logger.debug(f"Valor de SECRET_KEY (solo para depuración extrema, no usar en producción): {app.secret_key}")
-
+ 
 
     # Conexión a MongoDB
     try:
@@ -92,3 +92,6 @@ def get_db():
         print("ERROR CRITICO: get_db() fue llamado pero la instancia 'db' es None.")
         raise RuntimeError("La base de datos no ha sido inicializada o la conexión falló.")
     return db
+
+
+

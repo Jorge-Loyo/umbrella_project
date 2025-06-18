@@ -285,7 +285,8 @@ a.sidebar-link:hover,
 #cerrar-categoria,
 #cerrar-subcategoria,
 #cerrar-usuario,
-#cerrar-contraseña {
+#cerrar-contraseña 
+#cerrar-laboratorio {
     position: absolute; /* Saca el botón del flujo normal del documento */
     top: 12px; /* Distancia desde el borde superior del contenedor */
     right: 12px;
@@ -305,7 +306,8 @@ a.sidebar-link:hover,
 #cerrar-categoria i.fa-xmark,
 #cerrar-subcategoria i.fa-xmark,
 #cerrar-usuario i.fa-xmark,
-#cerrar-contraseña i.fa-xmark   {
+#cerrar-contraseña i.fa-xmark
+#cerrar-laboratorio i.fa-xmark {
     font-size: 1rem; /* Un tamaño adecuado para el icono en un botón más pequeño */
 }
 
