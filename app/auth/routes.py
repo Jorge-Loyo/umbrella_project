@@ -21,7 +21,7 @@ def login():
     # Esta es la línea que daba error (línea 20 en tu traceback anterior)
     if current_user.is_authenticated:
         current_app.logger.info(f"Usuario '{current_user.username}' ya autenticado. Redirigiendo al menú.")
-        return redirect(url_for('main.menu'))
+        return redirect(url_for('main.base'))  # Redirige a la página base si ya está autenticado
 
     if request.method == 'POST':
         username = request.form.get('username')
