@@ -1,10 +1,8 @@
-import uuid
-from flask import render_template, current_app, url_for, request, jsonify, flash # Asegúrate de tener flash aquí si lo usas en esta ruta (lo usabas en /menu)
+from flask import render_template, current_app, url_for, request, jsonify, flash, redirect # Asegúrate de tener flash aquí si lo usas en esta ruta (lo usabas en /menu)
 from app.main import bp
 from flask_login import login_required, current_user
 from app import get_db # Importa la función para obtener la instancia de la BD
-from datetime import datetime
-from bson import ObjectId
+from bson.objectid import ObjectId
 
 @bp.route('/')
 @bp.route('/index')
@@ -40,7 +38,9 @@ def base():
 
     db = get_db()
     lista_centros = []
+    lista_usuario = []
     try:
+        # Cargar centros
         centros_cursor = db.centros.find().sort("nombre", 1)
         for centro in centros_cursor:
             lista_centros.append({
@@ -48,11 +48,138 @@ def base():
                 "nombre": centro.get("nombre")
             })
         current_app.logger.debug(f"Centros cargados para el menú: {lista_centros}")
-    except Exception as e:
-        current_app.logger.error(f"Error al cargar centros desde MongoDB: {e}")
-        flash("Error al cargar la lista de centros.", "danger") # Necesitas importar flash de flask
 
-    return render_template('base.html', title='Menú Principal', user=current_user, centros=lista_centros)
+        # Cargar usuarios
+        usuarios_cursor = db.usuario.find().sort("nombre_usuario", 1)
+        for usuario in usuarios_cursor:
+            lista_usuario.append({
+                "id": usuario.get("_id"),
+                "nombre_usuario": usuario.get("nombre_usuario")
+            })
+        current_app.logger.debug(f"Usuarios cargados para el menú: {lista_usuario}")
+
+    except Exception as e:
+        current_app.logger.error(f"Error al cargar datos desde MongoDB: {e}")
+        flash("Error al cargar la lista de centros o usuarios.", "danger")
+
+    return render_template(
+        'base.html',
+        title='Menú Principal',
+        user=current_user,
+        centros=lista_centros,
+        usuarios=lista_usuario
+    )
+@bp.route('/editar_activo', methods=['POST'])
+@login_required
+def editar_activo_route():
+    """
+    Actualiza la actividad/inactividad de cualquier usuario.
+
+    Args:
+        filtro (dict): Filtro para encontrar el usuario a actualizar.
+        activo_inactivo (dict): Diccionario con el estado activo/inactivo a establecer.
+    Returns:
+        Redirige a la página principal con un mensaje de éxito o error.
+    """ 
+    usuario_id = request.form['usuarioActivo']
+    estado = request.form['activo_inactivo'] == 'Activo'
+    db = get_db()
+    coleccion = db['usuario']
+    resultado = coleccion.update_one(
+        {'_id': ObjectId(usuario_id)},
+        {'$set': {'activo': estado}}
+    )
+    if resultado.modified_count > 0:
+        flash('Usuario actualizado correctamente.', 'success')
+    else:
+        flash('No se encontró ningún usuario con ese ID o el estado ya estaba actualizado.', 'danger')
+    return redirect(url_for('main.base'))
+
+
+
+
+@bp.route('/crear_usuario', methods=['POST'])
+@login_required
+def crear_usuario_route():
+    """
+    Inserta un nuevo usuario o actualiza uno existente en la base de datos según el campo 'nombre_usuario'.
+
+    Args:
+        datos (dict): Diccionario con los datos obligatorios del usuario.
+
+    Returns: 
+        Redirige a la página principal con un mensaje de éxito o error.
+    """
+    estado = request.form['activo'] == 'Activo'
+    datos = {
+        'nombre': request.form['nombre'],
+        'apellido': request.form['apellido'],
+        'lugar_de_trabajo': request.form['lugar_de_trabajo'],
+        'mail': request.form['mail'],
+        'contraseña': request.form['contraseña'],
+        'nombre_usuario': request.form['nombre_usuario'],
+        'rol': request.form['rol'],
+        'activo': estado
+    }
+    campos_obligatorios = ['nombre', 'apellido', 'lugar_de_trabajo', 'mail', 'contraseña', 'nombre_usuario', 'rol', 'activo']
+    for campo in campos_obligatorios:
+        if campo not in datos or datos[campo] in [None, '', []]:
+            flash(f"El campo '{campo}' es obligatorio.", 'danger')
+            return redirect(url_for('main.base'))
+    db = get_db()
+    coleccion = db['usuario']
+
+    usuario_existente = coleccion.find_one({'nombre_usuario': datos['nombre_usuario']})
+
+    if usuario_existente:
+        resultado = coleccion.update_one(
+            {'nombre_usuario': datos['nombre_usuario']},
+            {'$set': datos}
+        )
+        if resultado.modified_count > 0:
+            flash('El usuario ya existía, datos actualizados correctamente.', 'success')
+        else:
+            flash('El usuario ya existía, pero no hubo cambios en los datos.', 'info')
+    else:
+        resultado = coleccion.insert_one(datos)
+        flash('Usuario creado exitosamente.', 'success')
+
+    return redirect(url_for('main.base'))
+
+
+
+@bp.route('/editar_pass', methods=['POST'])
+@login_required
+def editar_pass_route():
+    """
+    Actualiza la contraseña de un usuario específico.
+
+    Args:
+        usuario_id (str): ID del usuario cuyo contraseña se va a actualizar.
+        nueva_contraseña (str): Nueva contraseña a establecer para el usuario.
+
+    Returns: 
+        Redirige a la página principal con un mensaje de éxito o error.
+    """
+    usuario_id = request.form['usuarioBlanqueo']  
+    nueva_contrasena = request.form['nuevaContraseña']  
+
+    db = get_db()
+    coleccion = db['usuario']
+
+    resultado = coleccion.update_one(
+        {'_id': ObjectId(usuario_id)},
+        {'$set': {'contraseña': nueva_contrasena}}
+    )
+
+    if resultado.modified_count > 0:
+        flash("Contraseña actualizada correctamente.", "success")
+    else:
+        flash("La contraseña no pudo ser actualizada.", "danger")
+
+    return redirect(url_for('main.base')) 
+
+
 
 @bp.route('/buscar_medicamentos')
 @login_required
@@ -106,313 +233,3 @@ def buscar_medicamentos():
             return jsonify({"error": "Error interno al buscar medicamentos"}), 500
     
     return jsonify(medicamentos_encontrados)
-
-
-
-@bp.route('/guardar_subcategoria', methods=['POST'])
-@login_required
-def guardar_subcategoria():
-    db = get_db()
-    data = request.get_json()
-    current_app.logger.debug(f"JSON recibido para nueva subcategoría: {data}")
-
-    nombre_subcat = data.get("subcategoriaForm", "").strip().upper()  # Convertir a mayúsculas y eliminar espacios
-
-    if not nombre_subcat:
-        current_app.logger.warning("Campo 'subcategoriaForm' vacío")
-        return jsonify({"status": "error", "mensaje": "El campo Subcategoría es obligatorio."}), 400
-
-    # Verificar si ya existe una subcategoría con ese nombre
-    existente = db.subcategorias.find_one({"nombre": nombre_subcat})
-    if existente:
-        current_app.logger.warning(f"Ya existe una subcategoría con el nombre '{nombre_subcat}'")
-        return jsonify({
-            "status": "error",
-            "mensaje": f"Ya existe una subcategoría con el nombre '{nombre_subcat}'."
-        }), 409
-
-    try:
-        # Buscar la subcategoría con el mayor id_subcategoria_original
-        ultima_subcat = db.subcategorias.find_one(
-            {"id_subcategoria_original": {"$type": "int"}},
-            sort=[("id_subcategoria_original", -1)]
-        )
-        nuevo_id_subcat = (ultima_subcat["id_subcategoria_original"] + 1) if ultima_subcat else 1
-
-        subcategoria = {
-            "_id": ObjectId(),  # ID interno de MongoDB
-            "id_subcategoria_original": nuevo_id_subcat,  # ID incremental como entero
-            "nombre": nombre_subcat
-        }
-
-        result = db.subcategorias.insert_one(subcategoria)
-        current_app.logger.info(f"Subcategoría insertada con ID: {result.inserted_id}")
-
-        return jsonify({
-            "status": "ok",
-            "mensaje": "Subcategoría guardada exitosamente.",
-            "id": subcategoria["id_subcategoria_original"],
-            "nombre": subcategoria["nombre"]
-        }), 201
-
-    except Exception as e:
-        current_app.logger.error(f"Error al guardar subcategoría: {e}")
-        return jsonify({"status": "error", "mensaje": "Error interno al guardar subcategoría."}), 500
-    
-@bp.route('/guardar_categoria', methods=['POST'])
-@login_required
-def guardar_categoria():
-    db = get_db()
-    data = request.get_json()
-    current_app.logger.debug(f"JSON recibido para nueva categoría: {data}")
-
-    nombre_categoria = data.get("categoriaForm", "").strip().upper()  # Convertir a mayúsculas
-
-    if not nombre_categoria:
-        current_app.logger.warning("Campo 'categoriaForm' vacío")
-        return jsonify({"status": "error", "mensaje": "El campo Categoría es obligatorio."}), 400
-
-    # Verificar si ya existe una categoría con ese nombre
-    existente = db.categorias.find_one({"nombre": nombre_categoria})
-    if existente:
-        current_app.logger.warning(f"Ya existe una categoría con el nombre '{nombre_categoria}'")
-        return jsonify({
-            "status": "error",
-            "mensaje": f"Ya existe una categoría con el nombre '{nombre_categoria}'."
-        }), 409
-
-    try:
-        # Buscar el valor más alto de id_categoria_original (como entero)
-        ultima_categoria = db.categorias.find_one(
-            {"id_categoria_original": {"$type": "int"}},
-            sort=[("id_categoria_original", -1)]
-        )
-
-        nuevo_id_categoria = (ultima_categoria["id_categoria_original"] + 1) if ultima_categoria else 1
-
-        categoria = {
-            "_id": ObjectId(),  # ID interno de MongoDB
-            "id_categoria_original": nuevo_id_categoria,  # ID incremental
-            "nombre": nombre_categoria
-        }
-
-        result = db.categorias.insert_one(categoria)
-        current_app.logger.info(f"Categoría insertada con ID: {result.inserted_id}")
-
-        return jsonify({
-            "status": "ok",
-            "mensaje": "Categoría guardada exitosamente.",
-            "id": categoria["id_categoria_original"],
-            "nombre": categoria["nombre"]
-        }), 201
-
-    except Exception as e:
-        current_app.logger.error(f"Error al guardar categoría: {e}")
-        return jsonify({"status": "error", "mensaje": "Error interno al guardar categoría."}), 500
-
-@bp.route('/guardar_monodroga', methods=['POST'])
-@login_required
-def guardar_monodroga():
-    db = get_db()
-
-    try:
-        data = request.get_json()
-        nombre = data.get("nombreMonodroga", "").strip().upper()  # Convertir a mayúsculas
-        codigo_raw = data.get("codigoMonodroga", "").strip()
-
-        if not nombre or not codigo_raw:
-            return jsonify({"status": "error", "mensaje": "Todos los campos son obligatorios."}), 400
-
-        # Intentar convertir el código a entero
-        try:
-            codigo = int(codigo_raw)
-        except ValueError:
-            return jsonify({
-                "status": "error",
-                "mensaje": "El código debe ser un número entero."
-            }), 400
-
-        # Verificar si ya existe una monodroga con ese código
-        existente = db.monodrogas.find_one({"id_monodroga_original": codigo})
-        if existente:
-            return jsonify({
-                "status": "error",
-                "mensaje": f"Ya existe una monodroga con el código '{codigo}'."
-            }), 409  # 409 Conflict
-
-        monodroga = {
-            "id_monodroga_original": codigo,  # ya convertido a int
-            "nombre": nombre
-        }
-
-        resultado = db.monodrogas.insert_one(monodroga)
-
-        return jsonify({
-            "status": "ok",
-            "mensaje": "Monodroga guardada correctamente.",
-            "id": str(resultado.inserted_id)
-        }), 201
-
-    except Exception as e:
-        current_app.logger.error(f"Error al guardar monodroga: {e}")
-        return jsonify({
-            "status": "error",
-            "mensaje": "Ocurrió un error al guardar la monodroga."
-        }), 500
-
-@bp.route('/guardar_laboratorio', methods=['POST'])
-@login_required
-def guardar_laboratorio():
-    db = get_db()
-    try:
-        data = request.get_json()
-        nombre = data.get("nombreLaboratorio", "").strip().upper()  # Mayúsculas y sin espacios
-
-        if not nombre:
-            return jsonify({"status": "error", "mensaje": "El campo nombre es obligatorio."}), 400
-
-        # Verificar si ya existe un laboratorio con ese nombre (en mayúsculas)
-        existente = db.laboratorios.find_one({"nombre": nombre})
-        if existente:
-            return jsonify({
-                "status": "error",
-                "mensaje": f"Ya existe un laboratorio con el nombre '{nombre}'."
-            }), 409
-
-        # Buscar el id_laboratorio_original más alto
-        ultimo = db.laboratorios.find_one(
-            {"id_laboratorio_original": {"$type": "int"}},
-            sort=[("id_laboratorio_original", -1)]
-        )
-        nuevo_id = (ultimo["id_laboratorio_original"] + 1) if ultimo else 1
-
-        laboratorio = {
-            "id_laboratorio_original": nuevo_id,
-            "nombre": nombre
-        }
-
-        resultado = db.laboratorios.insert_one(laboratorio)
-
-        return jsonify({
-            "status": "ok",
-            "mensaje": "Laboratorio guardado correctamente.",
-            "id": str(resultado.inserted_id)
-        }), 201
-
-    except Exception as e:
-        current_app.logger.error(f"Error al guardar laboratorio: {e}")
-        return jsonify({
-            "status": "error",
-            "mensaje": "Ocurrió un error al guardar el laboratorio."
-        }), 500
-    
-@bp.route('/api/monodrogas')
-@login_required
-def api_monodrogas():
-    db = get_db()
-    monodrogas = list(db.monodrogas.find({}, {"_id": 0, "id_monodroga_original": 1, "nombre": 1}))
-    return jsonify(monodrogas)
-
-@bp.route('/api/categorias')
-@login_required
-def api_categorias():
-    db = get_db()
-    categorias = list(db.categorias.find({}, {"_id": 0, "id_categoria_original": 1, "nombre": 1}))
-    return jsonify(categorias)
-
-@bp.route('/api/subcategorias')
-@login_required
-def api_subcategorias():
-    db = get_db()
-    subcategorias = list(db.subcategorias.find({}, {"_id": 0, "id_subcategoria_original": 1, "nombre": 1}))
-    return jsonify(subcategorias)
-
-
-@bp.route('/api/laboratorios')
-@login_required
-def api_laboratorios():
-    db = get_db()
-    laboratorios = list(db.laboratorios.find({}, {"_id": 0, "id_laboratorio_original": 1, "nombre": 1}))
-    return jsonify(laboratorios)
-
-
-@bp.route('/guardar_medicamento', methods=['POST'])
-@login_required
-def guardar_medicamento():
-    db = get_db()
-    try:
-        data = request.get_json()
-
-        # Extracción y normalización de datos
-        nombre = data.get("nombreMedicamento", "").strip().upper()
-        codigo_raw = data.get("codigoMedicamento", "").strip()
-        laboratorio = data.get("laboratorioMedicamento", "").strip().upper()
-        monodroga = data.get("monodrogaMedicamento", "").strip().upper()
-        id_monodroga_original = data.get("monodCodigoMedicamento", "").strip()
-        presentacion = data.get("presentacionMonodroga", "").strip().upper()
-        categoria = data.get("categoriaMedicamento", "").strip().upper()
-        id_categoria = data.get("idCategoria", "").strip()
-        subcategoria = data.get("subcategoriaMedicamento", "").strip().upper()
-        id_subcategoria = data.get("idSubcategoria", "").strip()
-        trazable = bool(data.get("trazable", False))
-
-        # Validación de campos obligatorios
-        campos_obligatorios = [nombre, codigo_raw, laboratorio, monodroga, id_monodroga_original, presentacion, categoria, subcategoria]
-        if not all(campos_obligatorios):
-            return jsonify({"status": "error", "mensaje": "Todos los campos son obligatorios."}), 400
-
-        # Conversión de tipos
-        try:
-            codigo_medicamento = int(codigo_raw)
-            id_monodroga_original_int = int(id_monodroga_original)
-            id_categoria_int = int(id_categoria) if id_categoria else None
-            id_subcategoria_int = int(id_subcategoria) if id_subcategoria else None
-        except ValueError:
-            return jsonify({
-                "status": "error",
-                "mensaje": "Los códigos deben ser números enteros."
-            }), 400
-
-        # Buscar el id_laboratorio_original por nombre (en mayúsculas)
-        lab_doc = db.laboratorios.find_one({"nombre": laboratorio})
-        if not lab_doc:
-            return jsonify({"status": "error", "mensaje": "Laboratorio no encontrado."}), 400
-        id_laboratorio_original_int = lab_doc.get("id_laboratorio_original")
-
-        # Verificar si ya existe un medicamento con ese código
-        if db.medicamentos.find_one({"codigo_medicamento": codigo_medicamento}):
-            return jsonify({
-                "status": "error",
-                "mensaje": f"Ya existe un medicamento con el código '{codigo_medicamento}'."
-            }), 409
-
-        medicamento = {
-            "_id": ObjectId(),
-            "codigo_medicamento": codigo_medicamento,
-            "nombre": nombre,
-            "id_monodroga_original": id_monodroga_original_int,
-            "monodroga": monodroga,
-            "id_laboratorio_original": id_laboratorio_original_int,
-            "laboratorio": laboratorio,
-            "presentacion": presentacion,
-            "id_categoria": id_categoria_int,
-            "categoria": categoria,
-            "id_subcategoria": id_subcategoria_int,
-            "subcategoria": subcategoria,
-            "trazable": trazable
-        }
-
-        resultado = db.medicamentos.insert_one(medicamento)
-
-        return jsonify({
-            "status": "ok",
-            "mensaje": "Medicamento guardado correctamente.",
-            "id": str(resultado.inserted_id)
-        }), 201
-
-    except Exception as e:
-        current_app.logger.error(f"Error al guardar medicamento: {e}")
-        return jsonify({
-            "status": "error",
-            "mensaje": "Ocurrió un error al guardar el medicamento."
-        }), 500

@@ -17,6 +17,16 @@
             <source src="/static/video/2.mp4" type="video/mp4">
         </video>
     </div>-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 
     <div class="wrapper">
         <aside id="sidebar">
@@ -95,7 +105,7 @@
                             <a href="#" class="item-icon" id="enlace-cambiar-contraseña">Cambiar Contraseña</a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="#" class="item-icon">Derechos de Usuarios</a>
+                            <a href="#" class="item-icon" id="enlace-derechos-de-usuarios">Derechos de Usuarios</a>
                         </li>
                     </ul>
                 </li>
@@ -125,8 +135,8 @@
                         <select id="centro" name="centro" class="form-select">
                             <option value="">Selecciona un Centro...</option>
                             {% if centros %}
-                            {% for centro_item in centros %}
-                            <option value="{{ centro_item.id }}">{{ centro_item.nombre }}</option>
+                            {% for centro in centros %}
+                            <option value="{{ centro.id }}">{{ centro.nombre }}</option>
                             {% endfor %}
                             {% else %}
                             <option value="" disabled>No hay centros disponibles</option>
@@ -355,7 +365,7 @@
                 <div class="titulo-container">
                     <h2 class="mb-4">Crear nuevo Usuario</h2>
                 </div>
-                <form>
+                <form method="POST" action="{{ url_for('main.crear_usuario_route') }}">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="monodroga" class="form-label">Nombre:</label>
@@ -371,28 +381,42 @@
                     <div class="row mb-3">
                         <div class="col-md-8">
                             <label for="email" class="form-label">Email:</label>
-                            <input type="text" id="email" name="email" class="form-control" autocomplete="off" required>
+                            <input type="text" id="email" name="mail" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="col-md-4">
                             <label for="areaTrabajo" class="form-label">Área de trabajo:</label>
-                            <input type="text" id="areaTrabajo" name="areaTrabajo" class="form-control"
+                            <input type="text" id="areaTrabajo" name="lugar_de_trabajo" class="form-control"
                                 autocomplete="off" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="usuario" class="form-label">Nombre de Usuario:</label>
-                            <input type="text" id="usuario" name="usuario" class="form-control" autocomplete="off"
-                                required>
+                            <input type="text" id="usuario" name="nombre_usuario" class="form-control"
+                                autocomplete="off" required>
                         </div>
                         <div class="col-md-6">
                             <label for="contraseña" class="form-label">Contraseña:</label>
-                            <input type="text" id="contraseña" name="contraseña" class="form-control" autocomplete="off"
-                                required>
+                            <input type="password" id="contraseña" name="contraseña" class="form-control"
+                                autocomplete="off" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="rol" class="form-label">Rol:</label>
+                            <input type="text" id="rol" name="rol" class="form-control" autocomplete="off" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="activo" class="form-label">Activo/Inactivo:</label>
+                            <select id="activo" name="activo" class="form-select" required>
+                                <option value="">Selecciona una opción...</option>
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
                         </div>
                     </div>
                     <div class="mt-4">
-                        <button type="button" id="boton-ingresar-usuario" class="btn btn-primary me-2">Ingresar</button>
+                        <button type="submit" id="boton-ingresar-usuario" class="btn btn-primary me-2">Ingresar</button>
                     </div>
                 </form>
             </div>
@@ -404,20 +428,65 @@
                 <div class="titulo-container">
                     <h2 class="mb-4">Blanqueo de Contraseña</h2>
                 </div>
-                <form>
+                <form method="POST" action="{{ url_for('main.editar_pass_route') }}">
                     <div class="mb-3">
                         <label for="usuarioBlanqueo" class="form-label">Usuario:</label>
-                        <input type="text" id="usuarioBlanqueo" name="usuarioBlanqueo" class="form-control"
-                            autocomplete="off" required>
+                        <select id="usuarioBlanqueo" name="usuarioBlanqueo" class="form-select">
+                            <option value="">Selecciona un Usuario...</option>
+                            {% if usuarios %}
+                            {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}">{{ usuario.nombre_usuario }}</option>
+                            {% endfor %}
+                            {% else %}
+                            <option value="" disabled>No hay usuarios disponibles</option>
+                            {% endif %}
+                        </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="nuevaContraseña" class="form-label">Nueva Contraseña:</label>
-                        <input type="text" id="nuevaContraseña" name="nuevaContraseña" class="form-control"
+                        <input type="password" id="nuevaContraseña" name="nuevaContraseña" class="form-control"
                             autocomplete="off" required>
                     </div>
                     <div class="mt-4">
-                        <button type="button" id="boton-ingresar-contraseña"
+                        <button type="submit" id="boton-ingresar-contraseña"
                             class="btn btn-primary me-2">Cambiar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="form-container-small" style="display: none;" id="derechos-de-usuarios">
+                <button type="button" class="btn btn-primary" id="cerrar-derechos" aria-label="Cerrar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="titulo-container">
+                    <h2 class="mb-4">Estado</h2>
+                </div>
+                <form method="POST" action="{{ url_for('main.editar_activo_route') }}">
+                    <div class="mb-3">
+                        <label for="usuarioActivo" class="form-label">Usuario:</label>
+                        <select id="usuarioActivo" name="usuarioActivo" class="form-select">
+                            <option value="">Selecciona un Usuario...</option>
+                            {% if usuarios %}
+                            {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}">{{ usuario.nombre_usuario }}</option>
+                            {% endfor %}
+                            {% else %}
+                            <option value="" disabled>No hay usuarios disponibles</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="activo_inactivo" class="form-label">Estado:</label>
+                        <select id="activo_inactivo" name="activo_inactivo" class="form-select" required>
+                            <option value="">Selecciona una opción...</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" id="boton-ingresar-derechos" class="btn btn-primary me-2">Cambiar</button>
                     </div>
                 </form>
             </div>
