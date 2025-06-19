@@ -35,7 +35,7 @@ def login():
             current_app.logger.info(f"Login exitoso para '{username}'. Redirigiendo al menú.")
             next_page = request.args.get('next')
             if not next_page or url_for(next_page.lstrip('/')) == url_for('main.index'):
-                 next_page = url_for('main.menu')
+                 next_page = url_for('main.base')  # Redirige a la página base si 'next' no está definido o es la página de inicio
             return redirect(next_page)
         else:
             current_app.logger.warning(f"Login fallido para '{username}': usuario no encontrado o contraseña incorrecta.")
