@@ -564,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Botón Imprimir del modal clickeado");
             // Aquí iría tu lógica de impresión específica para la etiqueta
             // Por ejemplo, puedes abrir una ventana nueva e imprimir solo el contenido de la etiqueta:
-            const contenidoEtiqueta = document.getElementById('label-content-for-modal').innerHTML; // Asegúrate de que 'label-content-for-modal' es el ID de tu div que contiene la etiqueta en el modal
+            const contenidoEtiqueta = document.getElementById('etiqueta-para-imprimir').innerHTML;
             const ventanaImpresion = window.open('', '', 'height=600,width=800');
             ventanaImpresion.document.write('<html><head><title>Imprimir Etiqueta</title>');
             // **IMPORTANTE**: Asegúrate de incluir tus estilos CSS para la etiqueta aquí para que se imprima bien
