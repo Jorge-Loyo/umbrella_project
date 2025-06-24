@@ -367,4 +367,43 @@ document.addEventListener('DOMContentLoaded', () => {
         if (formMedicamento) formMedicamento.addEventListener("submit", enviarMedicamento);
     }
 
+     // -------------------------------------------------------------------
+    // SECCIÓN EXTRA: LÓGICA DE RESTRICCIÓN DE ROLES
+    // -------------------------------------------------------------------
+    const userRole = document.body.dataset.userRole;
+
+    if (userRole === 'Operario') {
+        console.log("Rol detectado: Operario. Aplicando restricciones de menú.");
+
+        // Ocultar el menú "Medicamentos" completo
+        const menuMedicamentos = document.getElementById('medicamentosMenu');
+        if (menuMedicamentos && menuMedicamentos.parentElement) {
+            menuMedicamentos.parentElement.style.display = 'none';
+        }
+
+        // Ocultar el enlace "Informes"
+        // Buscamos el enlace por su texto, ya que no tiene un ID único.
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        sidebarLinks.forEach(link => {
+            const span = link.querySelector('span');
+            if (span && span.textContent.trim() === 'Informes') {
+                if(link.parentElement) {
+                   link.parentElement.style.display = 'none';
+                }
+            }
+        });
+
+        // Ocultar opciones específicas del menú "Administración"
+        const enlaceCrearUsuario = document.getElementById('enlace-crear-usuario');
+        if (enlaceCrearUsuario && enlaceCrearUsuario.parentElement) {
+            enlaceCrearUsuario.parentElement.style.display = 'none';
+        }
+
+        const enlaceDerechos = document.getElementById('enlace-derechos-de-usuarios');
+        if (enlaceDerechos && enlaceDerechos.parentElement) {
+            enlaceDerechos.parentElement.style.display = 'none';
+        }
+    }
+
+
 }); // --- FIN DEL SCRIPT ---
