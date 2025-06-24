@@ -193,13 +193,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         div.className = 'sugerencia-item';
                         div.onclick = () => {
                             medicamentoInput.value = med.nombre;
-                            if(codigoInput) codigoInput.value = med.codigo_medicamento || '';
-                            if(presentacionInput) presentacionInput.value = med.presentacion_descripcion || '';
-                            if(laboratorioInput) laboratorioInput.value = med.laboratorio_nombre || '';
-                            if(monodrogaInput) monodrogaInput.value = med.monodroga_nombre || '';
-                            if(grupo1Input) grupo1Input.value = med.categoria_principal_nombre || '';
-                            if(grupo2Input) grupo2Input.value = med.subcategoria_nombre || '';
-                            if(trazabilidadContainer) trazabilidadContainer.style.display = med.trazable ? 'block' : 'none';
+                            if (codigoInput) codigoInput.value = med.codigo_medicamento || '';
+                            if (presentacionInput) presentacionInput.value = med.presentacion_descripcion || '';
+                            if (laboratorioInput) laboratorioInput.value = med.laboratorio_nombre || '';
+                            if (monodrogaInput) monodrogaInput.value = med.monodroga_nombre || '';
+                            if (grupo1Input) grupo1Input.value = med.categoria_principal_nombre || '';
+                            if (grupo2Input) grupo2Input.value = med.subcategoria_nombre || '';
+                            if (trazabilidadContainer) trazabilidadContainer.style.display = med.trazable ? 'block' : 'none';
                             sugerenciasContainer.style.display = 'none';
                         };
                         sugerenciasContainer.appendChild(div);
@@ -217,20 +217,20 @@ document.addEventListener('DOMContentLoaded', () => {
         botonVerVistaPrevia.addEventListener('click', () => {
             if (!medicamentoInput.value || !loteInput.value || !vencimientoInput.value) return alert("Por favor, completa los campos de Medicamento, Lote y Vencimiento.");
             const qrString = `${codigoInput.value}|${loteInput.value}|${vencimientoInput.value.replace(/-/g, '')}`;
-            
-            if(preview.centro) preview.centro.textContent = (centroSelect.selectedIndex > 0) ? centroSelect.options[centroSelect.selectedIndex].text : "N/A";
-            if(preview.medicamentoNombre) preview.medicamentoNombre.textContent = medicamentoInput.value;
-            if(preview.monodroga) preview.monodroga.textContent = monodrogaInput.value;
-            if(preview.presentacion) preview.presentacion.textContent = presentacionInput.value;
-            if(preview.lote) preview.lote.textContent = loteInput.value;
-            if(preview.vencimiento) preview.vencimiento.textContent = vencimientoInput.value;
-            if(preview.usuario) preview.usuario.textContent = `Prep: ${document.body.dataset.username || 'N/A'}`;
-            
+
+            if (preview.centro) preview.centro.textContent = (centroSelect.selectedIndex > 0) ? centroSelect.options[centroSelect.selectedIndex].text : "N/A";
+            if (preview.medicamentoNombre) preview.medicamentoNombre.textContent = medicamentoInput.value;
+            if (preview.monodroga) preview.monodroga.textContent = monodrogaInput.value;
+            if (preview.presentacion) preview.presentacion.textContent = presentacionInput.value;
+            if (preview.lote) preview.lote.textContent = loteInput.value;
+            if (preview.vencimiento) preview.vencimiento.textContent = vencimientoInput.value;
+            if (preview.usuario) preview.usuario.textContent = `Prep: ${document.body.dataset.username || 'N/A'}`;
+
             if (qrcodePreviewAreaModal) {
                 qrcodePreviewAreaModal.innerHTML = '';
                 new QRCode(qrcodePreviewAreaModal, { text: qrString, width: 80, height: 80, correctLevel: QRCode.CorrectLevel.H });
             }
-            if(modalVistaPreviaEtiqueta) modalVistaPreviaEtiqueta.show();
+            if (modalVistaPreviaEtiqueta) modalVistaPreviaEtiqueta.show();
         });
     }
 
@@ -261,21 +261,21 @@ document.addEventListener('DOMContentLoaded', () => {
             XLSX.writeFile(wb, "DatosEtiqueta.xlsx");
         });
     }
-    
+
     // --- Lógica para los formularios de creación (CRUD) ---
     if (enlaces.crearMedicamento) {
         enlaces.crearMedicamento.addEventListener('click', () => {
             poblarSelect('/api/monodrogas', 'monodrogaMedicamento', 'id_monodroga_original', 'nombre', () => {
                 const sel = document.getElementById('monodrogaMedicamento');
                 const inp = document.getElementById('monodCodigoMedicamento');
-                if(sel && inp) sel.onchange = () => { inp.value = sel.value || ''; };
+                if (sel && inp) sel.onchange = () => { inp.value = sel.value || ''; };
             });
             poblarSelect('/api/categorias', 'categoriaMedicamento', 'id_categoria_original', 'nombre');
             poblarSelect('/api/subcategorias', 'subcategoriaMedicamento', 'id_subcategoria_original', 'nombre');
             poblarSelect('/api/laboratorios', 'laboratorioMedicamento', 'id_laboratorio_original', 'nombre');
         });
     }
-    
+
     // --- Lógica para los botones de guardar ---
     // NOTA: Estas funciones asumen que tienes rutas de backend en Flask para '/guardar_...',
     // que actualmente no hemos localizado, por lo que podrían fallar.
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const nombreInput = document.getElementById("monodrogaForm");
             const codigoInput = document.getElementById("monodrogaFormCod");
             if (!nombreInput.value.trim() || !codigoInput.value.trim()) return alert("Nombre y Código son obligatorios.");
-            const ok = await guardarDatos("/guardar_monodroga", { 
+            const ok = await guardarDatos("/guardar_monodroga", {
                 nombreMonodroga: nombreInput.value.trim(),
                 codigoMonodroga: codigoInput.value.trim()
             });
@@ -358,9 +358,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 trazable: document.getElementById("trazableMedicamento").checked
             };
             if (!payload.nombreMedicamento || !payload.codigoMedicamento) return alert("Nombre y código son obligatorios.");
-            
+
             const ok = await guardarDatos("/guardar_medicamento", payload);
-            if(ok) formMedicamento.reset();
+            if (ok) formMedicamento.reset();
         };
 
         botonesGuardar.medicamento.addEventListener("click", enviarMedicamento);
