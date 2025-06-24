@@ -233,3 +233,78 @@ def buscar_medicamentos():
             return jsonify({"error": "Error interno al buscar medicamentos"}), 500
     
     return jsonify(medicamentos_encontrados)
+
+# --- INICIO: SECCIÓN DE API FALTANTE ---
+# Estas son las rutas que tu JavaScript estaba intentando llamar y que no existían.
+# Ahora el servidor podrá responder con los datos correctos para los menús desplegables.
+
+@bp.route('/api/monodrogas')
+@login_required
+def get_monodrogas_api():
+    db = get_db()
+    lista_monodrogas = []
+    try:
+        for doc in db.monodrogas.find({}, {"_id": 1, "id_monodroga_original": 1, "nombre": 1}).sort("nombre", 1):
+            lista_monodrogas.append({
+                "id": str(doc.get("_id")),
+                "id_monodroga_original": doc.get("id_monodroga_original"),
+                "nombre": doc.get("nombre")
+            })
+        return jsonify(lista_monodrogas)
+    except Exception as e:
+        current_app.logger.error(f"Error en API de monodrogas: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+@bp.route('/api/categorias')
+@login_required
+def get_categorias_api():
+    db = get_db()
+    lista_items = []
+    try:
+        # El script de migración la llama 'categorias_principales'
+        for doc in db.categorias_principales.find({}, {"_id": 1, "id_categoria_original": 1, "nombre": 1}).sort("nombre", 1):
+            lista_items.append({
+                "id": str(doc.get("_id")),
+                "id_categoria_original": doc.get("id_categoria_original"),
+                "nombre": doc.get("nombre")
+            })
+        return jsonify(lista_items)
+    except Exception as e:
+        current_app.logger.error(f"Error en API de categorías: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+@bp.route('/api/subcategorias')
+@login_required
+def get_subcategorias_api():
+    db = get_db()
+    lista_items = []
+    try:
+        for doc in db.subcategorias.find({}, {"_id": 1, "id_subcategoria_original": 1, "nombre": 1}).sort("nombre", 1):
+            lista_items.append({
+                "id": str(doc.get("_id")),
+                "id_subcategoria_original": doc.get("id_subcategoria_original"),
+                "nombre": doc.get("nombre")
+            })
+        return jsonify(lista_items)
+    except Exception as e:
+        current_app.logger.error(f"Error en API de subcategorías: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+@bp.route('/api/laboratorios')
+@login_required
+def get_laboratorios_api():
+    db = get_db()
+    lista_items = []
+    try:
+        for doc in db.laboratorios.find({}, {"_id": 1, "id_laboratorio_original": 1, "nombre": 1}).sort("nombre", 1):
+            lista_items.append({
+                "id": str(doc.get("_id")),
+                "id_laboratorio_original": doc.get("id_laboratorio_original"),
+                "nombre": doc.get("nombre")
+            })
+        return jsonify(lista_items)
+    except Exception as e:
+        current_app.logger.error(f"Error en API de laboratorios: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+# --- FIN: SECCIÓN DE API FALTANTE ---

@@ -22,7 +22,7 @@
     ></script>
   </head>
 
-  <body>
+    <body data-user-role="{{ user.rol }}">
     <!--<div class="content-video" id="generador-etiquetas-container" style="display: none;">
         <video autoplay muted loop id="video-background">
             <source src="/static/video/2.mp4" type="video/mp4">
@@ -173,6 +173,13 @@
         </div>
       </aside>
       <div class="main main-p3">
+        <div class="user-info-header">
+          <div class="user-details">
+            <i class="fa-solid fa-user-circle"></i>
+            <span>{{ user.nombre }} {{ user.apellido }}</span>
+            <span class="user-role">(Rol: {{ user.rol }})</span>
+          </div>
+        </div>
         <video
           class="content-video"
           muted
@@ -335,30 +342,26 @@
             </div>
 
             <div class="mt-4">
-              <button
-                type="button"
-                id="boton-imprimir"
-                class="btn btn-primary me-2"
-              >
-                Imprimir
-              </button>
-              <button
-                type="button"
-                id="boton-vista-previa"
-                class="btn btn-secondary me-2"
-              >
-                Ver vista previa
-              </button>
-              <button
-                type="reset"
-                id="boton-limpiar-formulario"
-                class="btn btn-outline-danger"
-              >
-                Limpiar
-              </button>
-            </div>
-          </form>
-        </div>
+  <button
+    type="button"
+    id="boton-generar-excel" class="btn btn-success me-2" >
+    Generar Excel
+  </button>
+  <button
+    type="button"
+    id="boton-vista-previa"
+    class="btn btn-secondary me-2"
+  >
+    Ver vista previa
+  </button>
+  <button
+    type="reset"
+    id="boton-limpiar-formulario"
+    class="btn btn-outline-danger"
+  >
+    Limpiar
+  </button>
+</div>
 
         <div
           class="form-container"
@@ -1038,8 +1041,9 @@
       </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    
     <script src="{{ url_for('static', filename='js/menu_script.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   </body>
 </html>
