@@ -3,7 +3,7 @@ from app.main import bp
 from flask_login import login_required, current_user
 from app import get_db # Importa la función para obtener la instancia de la BD
 from bson.objectid import ObjectId
-
+import re
 @bp.route('/')
 @bp.route('/index')
 def index():
@@ -39,6 +39,8 @@ def base():
     db = get_db()
     lista_centros = []
     lista_usuario = []
+    lista_roles = [] 
+
     try:
         # Cargar centros
         centros_cursor = db.centros.find().sort("nombre", 1)
@@ -47,7 +49,6 @@ def base():
                 "id": centro.get("id_sucursal_original"),
                 "nombre": centro.get("nombre")
             })
-        current_app.logger.debug(f"Centros cargados para el menú: {lista_centros}")
 
         # Cargar usuarios
         usuarios_cursor = db.usuario.find().sort("nombre_usuario", 1)
@@ -56,18 +57,22 @@ def base():
                 "id": usuario.get("_id"),
                 "nombre_usuario": usuario.get("nombre_usuario")
             })
-        current_app.logger.debug(f"Usuarios cargados para el menú: {lista_usuario}")
+
+        # Cargar roles únicos
+        lista_roles = db.usuario.distinct("rol") # <-- Obtenemos los roles únicos
+        current_app.logger.debug(f"Roles cargados: {lista_roles}")
 
     except Exception as e:
         current_app.logger.error(f"Error al cargar datos desde MongoDB: {e}")
-        flash("Error al cargar la lista de centros o usuarios.", "danger")
+        flash("Error al cargar la lista de centros, usuarios o roles.", "danger")
 
     return render_template(
         'base.html',
         title='Menú Principal',
         user=current_user,
         centros=lista_centros,
-        usuarios=lista_usuario
+        usuarios=lista_usuario,
+        roles=lista_roles 
     )
 @bp.route('/editar_activo', methods=['POST'])
 @login_required
@@ -96,7 +101,14 @@ def editar_activo_route():
     return redirect(url_for('main.base'))
 
 
+EMAIL_REGEX = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
+@bp.route('/ruta', methods=['POST'])
+def crear_usuario():
+    email = request.form.get('mail')
+    if not re.match(EMAIL_REGEX, email):
+        flash('Ingrese un correo electrónico válido', 'danger')
+        return redirect(url_for('main.crear_usuario_route'))
 
 @bp.route('/crear_usuario', methods=['POST'])
 @login_required
@@ -179,6 +191,36 @@ def editar_pass_route():
 
     return redirect(url_for('main.base')) 
 
+@bp.route('/editar_rol', methods=['POST'])
+@login_required
+def editar_rol_route():
+    """
+    Actualiza el rol de un usuario específico.
+    """
+    try:
+        usuario_id = request.form['usuarioRol']
+        nuevo_rol = request.form['rolSeleccionado']
+
+        if not usuario_id or not nuevo_rol:
+            flash("Se requiere tanto el usuario como el nuevo rol.", "warning")
+            return redirect(url_for('main.base'))
+
+        db = get_db()
+        resultado = db.usuario.update_one(
+            {'_id': ObjectId(usuario_id)},
+            {'$set': {'rol': nuevo_rol}}
+        )
+
+        if resultado.modified_count > 0:
+            flash("Rol del usuario actualizado correctamente.", "success")
+        else:
+            flash("No se encontró el usuario o el rol ya era el mismo.", "info")
+
+    except Exception as e:
+        current_app.logger.error(f"Error al editar rol: {e}")
+        flash("Ocurrió un error al intentar actualizar el rol.", "danger")
+
+    return redirect(url_for('main.base'))
 
 
 @bp.route('/buscar_medicamentos')

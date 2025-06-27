@@ -92,18 +92,21 @@
             <span>Administración</span>
           </a>
           <ul id="administracionMenu" class="sidebar-dropdown list-unstyle collapse" data-bs-parent="#sidebar">
-            <li class="sidebar-item">
-              <a href="#" class="item-icon" id="enlace-crear-usuario">Crear Usuario</a>
-            </li>
-            <li class="sidebar-item">
-              <a href="#" class="item-icon" id="enlace-cambiar-contraseña">Cambiar Contraseña</a>
-            </li>
-            <li class="sidebar-item">
-              <a href="#" class="item-icon" id="enlace-derechos-de-usuarios">Derechos de Usuarios</a>
-            </li>
+              <li class="sidebar-item">
+                  <a href="#" class="item-icon" id="enlace-crear-usuario">Crear Usuario</a>
+              </li>
+              <li class="sidebar-item">
+                  <a href="#" class="item-icon" id="enlace-cambiar-contraseña">Cambiar Contraseña</a>
+              </li>
+              <li class="sidebar-item">
+                  <a href="#" class="item-icon" id="enlace-derechos-de-usuarios">Derechos de Usuarios</a>
+              </li>
+              <li class="sidebar-item">
+                  <a href="#" class="item-icon" id="enlace-editar-rol">Editar Rol de Usuario</a>
+              </li>
           </ul>
         </li>
-      </ul>
+        </ul>
       <div class="sidebar-footer">
         <a href="/auth/logout" class="sidebar-link">
           <i class="fa-solid fa-arrow-right-from-bracket" id="logout"></i>
@@ -383,7 +386,7 @@
           <div class="row mb-3">
             <div class="col-md-8">
               <label for="email" class="form-label">Email:</label>
-              <input type="text" id="email" name="mail" class="form-control" autocomplete="off" required />
+              <input type="email" id="email" name="mail" class="form-control" autocomplete="off" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Ingrese un correo electrónico válido" />
             </div>
             <div class="col-md-4">
               <label for="areaTrabajo" class="form-label">Área de trabajo:</label>
@@ -405,7 +408,14 @@
           <div class="row mb-3">
             <div class="col-md-6">
               <label for="rol" class="form-label">Rol:</label>
-              <input type="text" id="rol" name="rol" class="form-control" autocomplete="off" required />
+              <select id="rolSeleccionado" name="rolSeleccionado" class="form-select" required>
+                <option value="">Selecciona un rol...</option>
+                {% if roles %}
+                    {% for rol in roles %}
+                        <option value="{{ rol }}">{{ rol }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
             </div>
             <div class="col-md-6">
               <label for="activo" class="form-label">Activo/Inactivo:</label>
@@ -498,6 +508,74 @@
           </div>
         </form>
       </div>
+      <div class="form-container-small" style="display: none;" id="editar-rol-container">
+    <button type="button" class="btn btn-primary" id="cerrar-editar-rol" aria-label="Cerrar">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="titulo-container">
+        <h2 class="mb-4">Editar Rol</h2>
+    </div>
+    <form method="POST" action="{{ url_for('main.editar_rol_route') }}">
+        <div class="mb-3">
+            <label for="usuarioRol" class="form-label">Usuario:</label>
+            <select id="usuarioRol" name="usuarioRol" class="form-select" required>
+                <option value="">Selecciona un Usuario...</option>
+                {% if usuarios %}
+                    {% for usuario in usuarios %}
+                        <option value="{{ usuario.id }}">{{ usuario.nombre_usuario }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="rolSeleccionado" class="form-label">Nuevo Rol:</label>
+            <select id="rolSeleccionado" name="rolSeleccionado" class="form-select" required>
+                <option value="">Selecciona un rol...</option>
+                {% if roles %}
+                    {% for rol in roles %}
+                        <option value="{{ rol }}">{{ rol }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+        </div>
+        <div class="mt-4">
+            <button type="submit" id="boton-cambiar-rol" class="btn btn-primary me-2">Cambiar Rol</button>
+        </div>
+    </form>
+</div>
+
+<div class="form-container-small" style="display: none;" id="derechos-de-usuarios">
+  <button type="button" class="btn btn-primary" id="cerrar-derechos" aria-label="Cerrar">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+  <div class="titulo-container">
+    <h2 class="mb-4">Estado</h2>
+  </div>
+  <form method="POST" action="{{ url_for('main.editar_activo_route') }}">
+    <div class="mb-3">
+      <label for="usuarioActivo" class="form-label">Usuario:</label>
+      <select id="usuarioActivo" name="usuarioActivo" class="form-select">
+        <option value="">Selecciona un Usuario...</option>
+        {% if usuarios %}
+            {% for usuario in usuarios %}
+            <option value="{{ usuario.id }}">{{ usuario.nombre_usuario }}</option>
+            {% endfor %} 
+        {% endif %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="activo_inactivo" class="form-label">Estado:</label>
+      <select id="activo_inactivo" name="activo_inactivo" class="form-select" required>
+        <option value="">Selecciona una opción...</option>
+        <option value="Activo">Activo</option>
+        <option value="Inactivo">Inactivo</option>
+      </select>
+    </div>
+    <div class="mt-4">
+      <button type="submit" id="boton-ingresar-derechos" class="btn btn-primary me-2">Cambiar</button>
+    </div>
+  </form>
+</div>
     </div>
   </div>
 

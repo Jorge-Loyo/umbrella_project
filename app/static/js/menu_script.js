@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Elementos Generales ---
     const sidebar = document.querySelector("#sidebar");
     const hamburguer = document.querySelector('#toggle-btn');
+      const enlaceEditarRol = document.getElementById('enlace-editar-rol');
+const editarRolContainer = document.getElementById('editar-rol-container');
+const botonCerrarEditarRol = document.getElementById('cerrar-editar-rol');
 
     // --- Enlaces para abrir formularios ---
     const enlaces = {
@@ -26,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         crearUsuario: document.getElementById('enlace-crear-usuario'),
         cambiarContrasenia: document.getElementById('enlace-cambiar-contraseña'),
         derechosDeUsuarios: document.getElementById('enlace-derechos-de-usuarios'),
+      
     };
 
     // --- Contenedores de Formularios ---
@@ -114,7 +118,61 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let formularioActivo = null;
+    mostrarFormulario(enlaceEditarRol, editarRolContainer);
+   // mostrarFormulario(enlaceGeneradorEtiquetas, generadorEtiquetasContainer);
+    //cerrarFormulario(botonCerrarEditarRol, editarRolContainer);
 
+    function mostrarFormulario(enlace, creador) {
+        if (enlace && creador) {
+            enlace.addEventListener('click', (event) => {
+                event.preventDefault();
+
+                // Si hay un formulario actualmente activo y no es el que se intenta abrir, ciérralo y límpialo
+                if (formularioActivo && formularioActivo !== creador) {
+                    formularioActivo.style.display = 'none'; // Oculta el formulario anterior
+
+                    // Llama a la función de limpieza específica del formulario que se acaba de cerrar
+                    // Utiliza el ID del formulario para determinar qué función de limpieza ejecutar
+                    switch (formularioActivo.id) {
+                        case enlaceGeneradorEtiquetas.id:
+                            limpiarCamposAutocompletadosYPreview();
+                            break;
+                        case crearNuevoMedicamento.id:
+                            limpiarFormIngreso(nuevoMedicamentoInput);
+                            break;
+                        case crearNuevaMonodroga.id:
+                            limpiarFormIngreso(nuevaMonodrogaInput);
+                            break;
+                        case crearNuevaCategoria.id:
+                            limpiarFormIngreso(nuevaCategoriaInput);
+                            break;
+                        case crearNuevaSubcategoria.id:
+                            limpiarFormIngreso(nuevaSubcategoriaInput);
+                            break;
+                        case crearUsuario.id:
+                            limpiarFormCrearUsuario();
+                            break;
+                        case crearNuevaContrasenia.id:
+                            limpiarFormCambiarContraseña();
+                            break;
+                        case derechosDeUsuarios.id:
+                            limpiarFormDerechosDeUsuarios();
+                            break;
+                        default:
+                            console.warn(`No hay función de limpieza definida para el formulario con ID: ${formularioActivo.id}`);
+                            break;
+                    }
+                }
+
+                // Muestra el formulario que se acaba de hacer clic
+                creador.style.display = 'block';
+
+                // Actualiza el formulario activo para el seguimiento
+                formularioActivo = creador;
+                console.log(`Formulario abierto: ${creador.id}`);
+            });
+        }
+    }
     //-------------------------------------------------------------------
     // SECCIÓN 2: DEFINICIÓN DE FUNCIONES
     //-------------------------------------------------------------------
