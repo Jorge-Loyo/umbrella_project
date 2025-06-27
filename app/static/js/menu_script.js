@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // NOTA: Estas funciones asumen que tienes rutas de backend en Flask para '/guardar_...',
     // que actualmente no hemos localizado, por lo que podrían fallar.
 
-    async function guardarDatos(url, payload) {
+     async function guardarDatos(url, payload) {
         try {
             const response = await fetch(url, {
                 method: "POST",
@@ -296,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
     }
+
 
     if (botonesGuardar.subcategoria) {
         botonesGuardar.subcategoria.addEventListener("click", async () => {
@@ -403,6 +404,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (enlaceDerechos && enlaceDerechos.parentElement) {
             enlaceDerechos.parentElement.style.display = 'none';
         }
+    }
+
+    // --- FUNCIONALIDAD PARA TOAST ---
+    const toastContainer = document.querySelector('.toast-container');
+    const toastMessagesContainer = document.getElementById('toast-messages-container');
+    
+    if (toastMessagesContainer) {
+      const toasts = toastMessagesContainer.querySelectorAll('.toast');
+      toasts.forEach(toastEl => {
+        const newToastEl = toastEl.cloneNode(true);
+        toastContainer.appendChild(newToastEl);
+        const toast = new bootstrap.Toast(newToastEl);
+        toast.show();
+      });
+      toastMessagesContainer.remove();
     }
 
 

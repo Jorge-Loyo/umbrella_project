@@ -14,12 +14,18 @@
 <body data-user-role="{{ user.rol }}">
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-  {% for category, message in messages %}
-  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-    {{ message }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-  </div>
-  {% endfor %}
+    <div id="toast-messages-container" style="display: none;">
+      {% for category, message in messages %}
+        <div class="toast align-items-center text-white bg-{{ category }} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+          <div class="d-flex">
+            <div class="toast-body">
+              {{ message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
   {% endif %}
   {% endwith %}
 
@@ -226,7 +232,7 @@
                 required />
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="mb-3">
             <label for="laboratorioMedicamento" class="form-label">Laboratorio:</label>
             <select id="laboratorioMedicamento" name="laboratorioMedicamento" class="form-select" required></select>
           </div>
@@ -569,10 +575,14 @@
     </div>
   </div>
 
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+  </div>
+
   <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
   <script src="{{ url_for('static', filename='js/menu_script.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
 
 </html>
