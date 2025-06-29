@@ -307,4 +307,4 @@ def get_laboratorios_api():
         current_app.logger.error(f"Error en API de laboratorios: {e}")
         return jsonify({"error": "Error interno"}), 500
 
-# --- FIN: SECCIÓN DE API FALTANTE ---
+# --- FIN: SECCIÓN DE API FALTANTE -----
