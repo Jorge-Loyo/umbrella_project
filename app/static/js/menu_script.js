@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         crearSubcategoria: document.getElementById('cerrar-subcategoria'),
         crearLaboratorio: document.getElementById('cerrar-laboratorio'),
         crearUsuario: document.getElementById('cerrar-usuario'),
-        cambiarContrasenia: document.getElementById('cerrar-contraseña'),
+        crearNuevaContrasenia: document.getElementById('cerrar-contraseña'),
         derechosDeUsuarios: document.getElementById('cerrar-derechos'),
     };
 
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // NOTA: Estas funciones asumen que tienes rutas de backend en Flask para '/guardar_...',
     // que actualmente no hemos localizado, por lo que podrían fallar.
 
-     async function guardarDatos(url, payload) {
+    async function guardarDatos(url, payload) {
         try {
             const response = await fetch(url, {
                 method: "POST",
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (formMedicamento) formMedicamento.addEventListener("submit", enviarMedicamento);
     }
 
-     // -------------------------------------------------------------------
+    // -------------------------------------------------------------------
     // SECCIÓN EXTRA: LÓGICA DE RESTRICCIÓN DE ROLES
     // -------------------------------------------------------------------
     const userRole = document.body.dataset.userRole;
@@ -388,37 +388,39 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebarLinks.forEach(link => {
             const span = link.querySelector('span');
             if (span && span.textContent.trim() === 'Informes') {
-                if(link.parentElement) {
-                   link.parentElement.style.display = 'none';
+                if (link.parentElement) {
+                    link.parentElement.style.display = 'none';
                 }
             }
         });
 
-        // Ocultar opciones específicas del menú "Administración"
-        const enlaceCrearUsuario = document.getElementById('enlace-crear-usuario');
-        if (enlaceCrearUsuario && enlaceCrearUsuario.parentElement) {
-            enlaceCrearUsuario.parentElement.style.display = 'none';
-        }
+        //Ocultar el enlace menu "Administración"
+        const AdminLinks = document.querySelectorAll('.sidebar-link');
+        sidebarLinks.forEach(link => {
+            const span = link.querySelector('span');
+            if (span && span.textContent.trim() === 'Administración') {
+                if (link.parentElement) {
+                    link.parentElement.style.display = 'none';
+                }
+            }
+        });
 
-        const enlaceDerechos = document.getElementById('enlace-derechos-de-usuarios');
-        if (enlaceDerechos && enlaceDerechos.parentElement) {
-            enlaceDerechos.parentElement.style.display = 'none';
-        }
+
     }
 
     // --- FUNCIONALIDAD PARA TOAST ---
     const toastContainer = document.querySelector('.toast-container');
     const toastMessagesContainer = document.getElementById('toast-messages-container');
-    
+
     if (toastMessagesContainer) {
-      const toasts = toastMessagesContainer.querySelectorAll('.toast');
-      toasts.forEach(toastEl => {
-        const newToastEl = toastEl.cloneNode(true);
-        toastContainer.appendChild(newToastEl);
-        const toast = new bootstrap.Toast(newToastEl);
-        toast.show();
-      });
-      toastMessagesContainer.remove();
+        const toasts = toastMessagesContainer.querySelectorAll('.toast');
+        toasts.forEach(toastEl => {
+            const newToastEl = toastEl.cloneNode(true);
+            toastContainer.appendChild(newToastEl);
+            const toast = new bootstrap.Toast(newToastEl);
+            toast.show();
+        });
+        toastMessagesContainer.remove();
     }
 
 
